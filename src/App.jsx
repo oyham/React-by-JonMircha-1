@@ -4,6 +4,9 @@ import './App.css'
 import Count from './components/Count'
 import Componente from './components/Componente'
 import Propiedades from './components/Propiedades'
+import Estado from './components/Estado'
+import ComunicacionComponentes from './components/ComunicacionComponentes'
+import CicloVida from './components/CicloVida'
 
 function App() {
   // const [count, setCount] = useState(0)
@@ -43,6 +46,9 @@ function App() {
           elementoReact={<i>Esto es un elemento React</i>}
           componenteReact={<Componente msg="soy un componente pasado como Prop"/>}
         />
+        <Estado />
+        <ComunicacionComponentes />
+        <CicloVida />
       </section>
     </div>
   )
