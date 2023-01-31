@@ -8,10 +8,9 @@ import Estado from './components/Estado'
 import ComunicacionComponentes from './components/ComunicacionComponentes'
 import CicloVida from './components/CicloVida'
 import AjaxApis from './components/AjaxApis'
+import ContadorHooks from './components/ContadorHooks'
 
 function App() {
-  // const [count, setCount] = useState(0)
-
   return (
     <div className="App">
       <div>
@@ -51,6 +50,7 @@ function App() {
         <ComunicacionComponentes />
         <CicloVida />
         <AjaxApis />
+        <ContadorHooks titulo="por Defecto"/>
       </section>
     </div>
   )
