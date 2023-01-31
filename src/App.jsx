@@ -7,6 +7,7 @@ import Propiedades from './components/Propiedades'
 import Estado from './components/Estado'
 import ComunicacionComponentes from './components/ComunicacionComponentes'
 import CicloVida from './components/CicloVida'
+import AjaxApis from './components/AjaxApis'
 
 function App() {
   // const [count, setCount] = useState(0)
@@ -49,6 +50,7 @@ function App() {
         <Estado />
         <ComunicacionComponentes />
         <CicloVida />
+        <AjaxApis />
       </section>
     </div>
   )
