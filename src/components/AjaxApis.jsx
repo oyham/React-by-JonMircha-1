@@ -46,7 +46,8 @@ export default class AjaxApis extends Component {
                 <h2>Peticiones Asíncronas en Componentes de clase</h2>
                 {this.state.pokemons.length === 0
                     ? <h3>Cargando...</h3>
-                    : this.state.pokemons.map(el => <Pokemon key={el.id} name={el.name} avatar={el.avatar} />)}
+                    : this.state.pokemons.map(el => <Pokemon key={el.id} name={el.name} avatar={el.avatar} />)
+                }
             </>
         )
     }
