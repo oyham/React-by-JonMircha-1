@@ -1,7 +1,7 @@
 # APUNTES 
 
 
-## 17. _Hook useEffect_
+## 17. _Hook useEffect_ ScrollHooks
 
 ###### se pueden tener tantos useEffects como se necesiten
 
@@ -19,5 +19,23 @@ useEffect *permite devolver una función.* Si un useEffect **posee** un `return(
 - Desconectarte de Apis. 
 - Limpiar intervalos de tiempo. 
 - Limpiar manejadores de eventos. 
+
+---
+
+# 18. _Hook useEffect_ RelojHooks
+
+`const [visible, setVisible] = useState(false)
+
+    useEffect(() => {
+       let temporizador;
+
+    },[visible])`
+--
+    Al cambiar el valor de la variable visible **(variablede estado)** se ejecturá lo que exista dentro del useEffect.
+
+    
+
+
+
 
 

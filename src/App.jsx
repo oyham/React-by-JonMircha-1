@@ -10,6 +10,7 @@ import CicloVida from './components/CicloVida'
 import AjaxApis from './components/AjaxApis'
 import ContadorHooks from './components/ContadorHooks'
 import ScrollHooks from './components/ScrollHooks'
+import RelojHooks from './components/RelojHooks'
 
 function App() {
   return (
@@ -53,6 +54,7 @@ function App() {
         <AjaxApis />
         <ContadorHooks titulo="por Defecto"/>
         <ScrollHooks />
+        <RelojHooks />
       </section>
     </div>
   )
