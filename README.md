@@ -40,9 +40,8 @@ Al cambiar el valor de la variable visible **(variablede estado)** se ejecturá 
 # 19. _Peticiones Asíncronas con Hooks (AJAX Y API's)_ AjaxHooks
 
 La funcion Pokemon que pinta en el DOM los pokemons, hace una destructuración de las props con {} tal que queda de la siguiente manera: 
-
-    ```js
-        function Pokemon({ avatar, name }) {
+```js
+    function Pokemon({ avatar, name }) {
            return (
         <figure>
             <img src={avatar} alt={name} />
@@ -50,7 +49,7 @@ La funcion Pokemon que pinta en el DOM los pokemons, hace una destructuración d
         </figure>
         )
     }
-    ```
+```
 Luego para la llamada a la api, no realizaremos la destructuración con ` let pokemons = [...this.state.pokemons, pokemon]` ya que se puede simplificar con el useState: `setPokemons((pokemons)=>[])` (modifíca el estado de la variable hook). 
 
 ---
@@ -72,7 +71,46 @@ Si hablamos de Asincronía en la función que recíbe el useEffect, colocaríamo
 ```
 ###### definir la funcion asincrona de forma expresada, aplicar el async y dentro del mismo useEffect la invocamos.
 *_Hasta podríamos pasarle como parametro la url_* ` const getPokemons =  async (url) =>` *+* `getPokemons("https://...")`
+
 ---
+
+# 20. _Custom Hooks_ HooksPersonalizados
+##### Personalizar una función que se utilice mucho, estandarizarlo en un hook para su reciclado. 
+
+*Recomendación:* para que React sepa que se está usando un hook personalizado, el hook debe empezar con la palabra clave _*"use"*_ y con lowerCamelCase. Ej: useFetch
+---
+
+---
+En el ejemplo dado por Jon, en el useFetch no se importa React, sólo se importa los useState/useEffect ya que lo que se crea no es un componente funcional, sino literal, es una función que luego se utilizara en el archivo HooksPersonalizados.
+##### (metodo por defecto que utiliza fetch: GET).
+
+El hook personalizado debe de devolver ciertos valores, por eso se debe de utilizar un *return*. Se puede retonar lo que sea, {} [] number string boolean etc.
+
+En el ejemplo, una buena practica es que al crear un hook personalizado, llamar a las const con algun nombre varbiale para que se adapte a cualquier llamado y uso futuro. Ej `const getPokemons = async (url) =>` se cambia por `const getData = async (url) =>`
+
+Utilizamos un try{}catch{} para la manipulación de errores.
+THROW = return de los errores.
+
+### Petición genérica.
+Por eso se elimína el forEach de los pokemons ya que esa lógica debe ir aparte, exactamente en el hook personalizado, en el que va a usar el useFetch.
+
+
+---
+
+# 21. _Referencias_ REFERENCIAS
+
+Es una manera en que react nos permite *CONTROLAR* un elemento que ya ha sido cargado al *DOM* sin tener que hacer un Render total del DOM por el cambio de estado.
+
+### *createRef y useRef* se utilíza para crear las referencias.
+Las referencias pueden ser tomadas como un selector que YA existe en el DOM pero... dentro de React.
+
+## NO se puede usar createRef en componentes funcionales.
+!!!NOTA: si poseemos un class component, utilizamos createRef para crear la var de referencia. Pero si utilizamos hooks, se usa useRef. Tampoco hay que abusar de las refs, ya que esta tecnica, aunque no haga manipulación directa al DOM, las referencias *SI* existen en el DOM real, a diferencia de las variables de estado que existen en el DOM virtual.
+
+---
+
+
+
 
 
 
