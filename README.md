@@ -97,7 +97,7 @@ Por eso se elimína el forEach de los pokemons ya que esa lógica debe ir aparte
 
 ---
 
-# 21. _Referencias_ REFERENCIAS
+# 21. _Referencias_ Referencias
 
 Es una manera en que react nos permite *CONTROLAR* un elemento que ya ha sido cargado al *DOM* sin tener que hacer un Render total del DOM por el cambio de estado.
 
@@ -108,6 +108,115 @@ Las referencias pueden ser tomadas como un selector que YA existe en el DOM pero
 !!!NOTA: si poseemos un class component, utilizamos createRef para crear la var de referencia. Pero si utilizamos hooks, se usa useRef. Tampoco hay que abusar de las refs, ya que esta tecnica, aunque no haga manipulación directa al DOM, las referencias *SI* existen en el DOM real, a diferencia de las variables de estado que existen en el DOM virtual.
 
 ---
+
+# 22. _Formularios_ 
+
+###### Formularios NO controlados - Formularios controlados.
+
+!Al utilizar etiquetas label, su propiedad for se cambia por htmlFor, y si bajo poseemos un input con un id... ese nombre debe de ir en la prop htmlfor.
+---
+
+## Input
+
+React recomienda para trabajar el manejo del estado, es crear una var de estado y asignarsela al *input*.
+
+!Cuiado. Si proveemos la etiqueta 'value', esta prop de un el de form no puede estar sin el evento onChange para el manejo del cambio. Si queremos un valor por default, se utiliza defaultValue.
+`onChange={(e) => setNombre()}` _e_ es el objeto que origina el evento, en este caso el input.
+
+Asi se obtiene un input controlado mediante el estado:
+
+```js
+export default function Formularios() {
+    const [nombre, setNombre] = useState('')
+    return (
+        <>
+            <form htmlFor='nombre'>
+                <label htmlFor="nombre">Nombre:</label>
+                <input
+                    type="text"
+                    id='nombre'
+                    name='nombre'
+                    value={nombre}
+                    onChange={(e) => setNombre(e.target.value)}
+                />
+            </form>
+        </>
+    )
+}
+```
+---
+## Radio
+Los inputs de tipo radio y checkbox realmente son como valores booleanos... los radio todos deberian tener el mismo name para solamente poder seleccionar una sola alternativa.
+
+```js
+<input type="radio"
+    id='vanilla'
+    name='sabor'
+    value='vailla'
+    onChange={handleChange}
+    defaultChecked
+/>
+```
+
+Si queremos que un input aparezca ya chequeado, se debe de utilizar *defaultChecked.*
+
+## Select
+```js
+<select
+    name="lenguaje"
+    onChange={(e) => setLenguaje(e.target.value)}
+    defaultValue=""
+>
+    <option value="">---</option>
+    <option value="js">Javascript</option>
+</select>
+```
+
+## Checkbox
+ `onchange={(e) => setTerminos(e.target.checked)}` *checked* = boolean.
+
+## Submit
+Se le debe agregar al from el ``onSubmit={handleSubmit}``.
+```js
+const handleSubmit = e => {
+        e.preventDefault()
+        alert('El formulario se ha enviado')
+    }
+```
+
+## Formulario _Complejo_
+Solo tendremos una variable de estado por cada input, solo tendremos una. `const [form, setForm] = useState({})`.
+
+Luego tendremos 2 eventos.
+
+- `const handleChange` es la función que se encargará de manejar los eventos en todos los form que decidamos vincular. 
+- ` const handleSubmit`.
+
+Es muy importante que los _el_ del form tengan el atributo *name*
+---
+Ya que indicaremos que por lo que ya traiga la variable de estado, utilizaremos el _spread operator_ para hacer una mezcla de lo que ya tenga el form + el e.target.name (el elemento que generó el evento) guiandonos a traves del name.
+
+!Si queremos que el `e.target.name` se  vuelva una propiedad del objeto, debemos de utilizar la destructuración para decir: mezcla lo que ya traiga el form con `[e.target.name]`; y si ya detecta que esta prop existía prev en el objeto que viene, la actualizará con `e.target.value`
+
+```js
+const handleChange = (e) => {
+        setForm({
+            ...form,
+            [e.target.name]:e.target.value
+        })
+    }
+```
+
+Para los inputs que deban de evaluar un checked y no un value, generamos un nuevo manejador `const handleChecked` y solo cambiamos value por cheked.
+
+`[e.target.name]:e.target.checked`
+
+---
+
+
+
+
+
 
 
 
