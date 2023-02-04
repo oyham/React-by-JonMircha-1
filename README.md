@@ -213,6 +213,30 @@ Para los inputs que deban de evaluar un checked y no un value, generamos un nuev
 
 ---
 
+# 23. *_Estilos CSS_* Estilos
+En index.css tendriamos los estilos de reseteo, y en app.css los estilos directos aplicados y personalizados al DOM.
+
+Se sugiere que si se trabajan los estilos con un archivo.css aparte, usando la importación para la aplicacion de estos... el archivo sea llamado del mismo nombre que del archivo.jsx, y sea *colocado* en la misma carpeta.
+
+Otra estructura seria dividir los componentes en carpetas y cada uno con su respectivo css.
+
+El import de los archivos css si es que se encuentra en la misma carpeta del componente sería tal que así `import "./Estilos.css"`
+
+Otra manera seria aplicar estilos en linea con la etiquieta `style={{}}`.
+ *Recordemos que los estilos se manejan como objetos*, por eso los {}
+---
+
+Tambien podemos añadir estilos en el mismo componente con un `let myStyles={}` y pasarlo como prop con la etiqueta `style={myStyles}`.
+
+!@import-normalize en el *index.css* para importar un normalize si lo creemos necesario.
+
+## Estilos como MODULOS
+Se debe de crear un archivo css con el nombre del componenten y agregar .module.css `Estilos.module.css`. Luego en el import creamos una variable que almacene todos los selectores de los estilos. `import moduleStyles from "./Estilos.module.css"`. Aplicación: `className={moduleStyles.success}`.
+
+## Instalar SASS
+`npm install node-sass` || `npm add --save-dev sass` <- Este me funcionó. Cabe recalcar que estoy usando vite. Aunque primero hice el install con node-sass...
+---
+NOTA: los caracteres 7 y 8 del código hexadecimal representa la opacidad.
 
 
 
