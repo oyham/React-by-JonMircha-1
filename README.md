@@ -369,7 +369,7 @@ const GlobalStyle = createGlobalStyle`
 # 25. *_Frameworks CSS_*
 #### Maquetación para la facilitación del diseño.
 
-Boostrap
+Bootstrap
 ---
 Con bootstrap es necesario cambiar el codigo html por jsx, como por ej los class por className, cerrar los así <hr />, tabindex por tabIndex, los buttons que cierran en una misma línea...
 
@@ -378,8 +378,9 @@ Bulma. Framework moderno. No depende de JQuery
 
 ---
 
-
-
+# 26. *_React Bootstrap & Material UI_*
+### npm install react-bootstrap bootstrap | npm i @material-ui/core
+Recordar que sólo podemos usar un framework a la vez.
 
 
 
