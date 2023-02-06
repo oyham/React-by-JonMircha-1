@@ -238,6 +238,135 @@ Se debe de crear un archivo css con el nombre del componenten y agregar .module.
 ---
 NOTA: los caracteres 7 y 8 del código hexadecimal representa la opacidad.
 
+---
+
+# 24. *_Styled Components_*
+#### Es una librería. npm install --save styled-components. Installar styled-components-snippet 
+
+Esta libraría ya trae un wraped de todas las etiquetas react. Una forma de aplicación es creando una *const* y aplicando el styled.(la etiqueta que se desee aplicar estilo) + `` (donde iran las props css).
+
+```js
+const MyH3 = styled.h3`
+    padding: 2rem;
+    text-align: center;
+    color: #49011;
+    `;
+
+    <MyH3>Hola Soy un h3</MyH3>
+```
+Tambien podemos hacer uso de la _interpolación_, y hasta aplicar funciones a estas interpolaciones para manejos mas especificos segun deseemos que posea cada etiqueta react.
+
+```js
+ let mainColor = "#db7093",
+        mainAlphaColor80 = '#db709380';
+
+    const setTransitionTime = (time) => `all ${time} ease-in-out`
+
+    const MyH3 = styled.h3`
+    background-color: ${mainColor};
+    transition: ${setTransitionTime("1s")};
+
+    &:hover{
+        background-color: ${mainAlphaColor80}
+    }
+    `;
+```
+
+En este caso estamos manejando el tiempo del transition, y ademas estamos cambiando el color al hacer hover con los lets creados previamente.
+
+Tambien podemos pasar props como etiquetas dentro del mismo `<MyH3 color:"#fff"></MyH3>` y el styled.h3 quedaría así: 
+```js
+    color: ${props => props.color};
+    color: ${({color}) => color}; 
+    color: ${({color}) => color || "#000"}; 
+```
+~_Simplificación en cascada_~
+
+``import {css} from 'styled-components'`` sirve para usar styled-components dentro de él mismo para permitir interpolar mas templatestrings con codigo css.
+
+`<MyH3 isButton>Soy un h3 estilizado como botón</MyH3>`
+```js
+${(props) => props.isButton &&
+            css`
+            margin: auto;
+            max-width: 50%;
+            border-radius: 0.25rem;
+            cursor: pointer;
+         `
+ }
+```
+DESTRUCTURACIÓN: `${({isButton}) => isButton`
+
+Animaciones internas: `import {keyframes}` 
+```js
+const fadeIn = keyframes`
+        0%{
+            opacity:0;
+        }
+        100%{
+            opacity:1;
+        }
+    `
+
+ const MyH3 = styled.h3`
+    animation:${fadeIn} 2s ease-out;    
+```
+
+Light/Dark Theme con `{ThemeProvider}` from 'styled-components'. Al utilizar un themeprovider funciona como un contenedor, genera un contexto.
+```js
+  const light ={
+        color:"#111",
+        bgColor:"#DDD"
+    }
+
+    const dark ={
+        color:"#DDD",
+        bgColor:"#111"
+    }
+
+    const Box = styled.div`
+        padding: 1rem;
+        margin: 1rem;
+        color:${({theme})=>theme.color};
+        background-color:${({theme})=>theme.bgColor}
+    `  
+ return(   
+ <ThemeProvider theme={light}>
+  <Box>Soy una caja light</Box>
+ </ThemeProvider>
+ <ThemeProvider theme={dark}>
+  <Box>Soy una caja dark</Box>
+ </ThemeProvider>
+ )
+```
+Heredación de estilos de componentes ya hechos. Para esto creamos una const e igualamos a styled() llamada como función y entre sus parentesis indicamos de donde queremos que herede dichos estilos: `const BoxRounded=styled(Box)`
+```js
+const BoxRounded=styled(Box)`
+        border-radius:1rem;
+    `
+
+    <BoxRounded>Redondeada</BoxRounded>
+```
+La ultima funcionalidad que veremos se llama Global Style `{createGlobalStyle}`. Se recomienda que se haga la llamada en index.jsx o app.jsx...
+```js
+const GlobalStyle = createGlobalStyle`
+        h2 {
+            padding: 2rem;
+            background-color:#fff;
+            color:#61dafb;
+            text-transform: uppercase;
+        }
+    `
+
+    retrun(
+        <GlobalStyle />
+        ...
+    )
+```
+
+---
+
+
 
 
 
