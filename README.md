@@ -366,6 +366,24 @@ const GlobalStyle = createGlobalStyle`
 
 ---
 
+# 25. *_Frameworks CSS_*
+#### Maquetación para la facilitación del diseño.
+
+Boostrap
+---
+Con bootstrap es necesario cambiar el codigo html por jsx, como por ej los class por className, cerrar los así <hr />, tabindex por tabIndex, los buttons que cierran en una misma línea...
+
+Bulma. Framework moderno. No depende de JQuery
+---
+
+---
+
+
+
+
+
+
+
 
 
 
