@@ -382,9 +382,22 @@ Bulma. Framework moderno. No depende de JQuery
 ### npm install react-bootstrap bootstrap | npm i @material-ui/core
 Recordar que sólo podemos usar un framework a la vez.
 
+---
 
+# 27. *_React DevTools & Snippets_*
 
+RDtools. Components sirve para ver el arbol de los hijos, y dentro de las caracteristicas se iran cargando las props dentro del manejo del estado, y las hooks. Tambien nos muestra la linea de código en source.
 
+- El reloj: Suspend es una manera de hacer peticiones asíncronas. 
+- El ojo: te lleva al elemento ya cargado en el DOM del componente que hayamos seleccionado.
+- El bug/Bicho: nos da un log del componente en cuestión y colocara toda la info en la consola del browser.
+- Los <>: nos mostrara en la consola el codigo original en la pesaña de source.
+
+El profiler es para ir grabando todas las acciones que ejecute nuestra app y nos genera unas caracteristicas del rendimiento. 
+
+---
+Los Snippets son atajos para escribir los componentes de manera mas rapida para ahorrar tiempo. 
+Si por algún motivo no nos salen los atajos de manera automatica, podemos ejecturalos de forma manual con ctrl + barra espaciadora. 
 
 
 
