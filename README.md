@@ -395,9 +395,149 @@ RDtools. Components sirve para ver el arbol de los hijos, y dentro de las caract
 
 El profiler es para ir grabando todas las acciones que ejecute nuestra app y nos genera unas caracteristicas del rendimiento. 
 
----
 Los Snippets son atajos para escribir los componentes de manera mas rapida para ahorrar tiempo. 
 Si por algún motivo no nos salen los atajos de manera automatica, podemos ejecturalos de forma manual con ctrl + barra espaciadora. 
+
+---
+
+# 28. CRUD App: Creacion de componentes y renderizado de datos (1/4)
+
+Los primeros pasos para crear el CRUD es crear un archivo llamado ``CrudApp``, en este se encontrara el _*formulario*_ donde iremos agregando datos, y una _*tabla*_ donde se iran pintando dichos datos en el DOM.
+También creamos una base de datos para hacer uso de la petición a utilizar.
+
+```js
+const initialDb = [
+    {
+        id: 1,
+        name: "Seiya",
+        constellation: "Pegaso",
+    },
+]
+export default function CrudApp() {
+    return (
+        <>
+            <h2>CRUD App</h2>
+            <form></form> Aquí iría el CrudForm
+            <table></table> Aquí iría el CrudTable
+        </>
+    )
+}
+```
+
+Para la creación del form trabajaremos con componentes separados para un mejor manejo de estos, asi que crearemos un ``CrudForm.jsx``. Este posee el formulario y los eventos correspondientes. Necesitamos *3* manejadores que se encargaran de: 
+- handleChange: manejara los inputs donde iran las entradas strings, en este caso nombre y constelación.
+- handleSubmit: manejara el form con la etiqueta onSubmit ya que se encargará de hacer el envío de los datos.
+- handleReset: manejara el input con type='reset', este se encarga de resetear el formulario con el *e* onClick.
+
+Inicialmente crearemos una const que posea las props de la base de datos que creamos para que no haya warnings a la primera inicialización del formulario. ``InitialFrom`` será el estado inicial de los inputs con value form.
+```js
+const initialForm = {
+  name:"",
+  constellation:"",
+  id: null,
+}
+
+
+export const CrudForm = () => {
+    const [form,setForm] = useState(initialForm)
+
+    const handleChange = (e) =>{}
+    const handleSumbit = (e) =>{}
+    const handleReset = (e) =>{}
+
+  return (
+    <div>
+        <h3>Agregar</h3>
+        <form onSubmit={handleSumbit}>
+            <input onChange={handleChange} value={form.name} type="text" name='name' placeholder='nombre' />
+            <input onChange={handleChange} value={form.constellation} type="text" name='constelattion' placeholder='constelación' />
+            <input type="submit"/>
+            <input onClick={handleReset} type="reset" value ='Limpiar'/>
+        </form>
+    </div>
+  )
+}
+```
+Ya hecho este paso seguiremos con la creación del ``CrudTable``. Esta tendrá la función de mostrar los datos obtenidos de la initialDb que creamos en ``CrudApp``, y mostrará los datos que iremos agregando a traves del ``CrudForm``. 
+```js
+export const CrudTable = () => {
+    return (
+        <>
+            <h3>Tabla de Datos</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Constelación</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Oyham</td>
+                        <td>Piscis</td>
+                        <td>
+                            <button>Editar</button>
+                            <button>Eliminar</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </>
+    )
+}
+```
+Para mostrar la base de datos inicial debemos de crear un useState con el estado inicial InitialDb, para luego pasarla como prop a la CrudTable, quedando lo siguiente:
+
+```js
+const initialDb = [...]
+
+export default function CrudApp() {
+    const [db,setDb] = useState(initialDb)
+
+    return (
+        <>
+            <h2>CRUD App</h2>
+            <CrudForm />
+            <CrudTable data={db} />
+        </>
+    )
+}
+```
+La prop data sera envíada al CrudTable, y este hara la destruccturación: ``export const CrudTable = ({data}) =>``
+
+Luego en el CrudTable haremos una separación de lo que se encuentre en tbody, creando así un nuevo componente llamado ```CrudTableRow``. Este poseera lo que prev se encontraba en el tbody. 
+
+En el CrudTable, en la parte del tbody, realizaremos un conditional render, preguntandonos sobre la Db en caso de que exista pero vacía. Si no viene vacía realizaremos un mapeo  por cada *_el_* proveniente de dicha base de datos, y por cada uno renderizara el componente ``CrudTableRow``.
+
+```js
+<tbody>
+    {data.lenght === 0 ? (
+         <tr>
+            <td colSpan="3">Sin datos</td>
+        </tr>
+        ) : (
+            data.map(el => <CrudTableRow key={el.id} el={el}/>)
+        )}
+</tbody>
+```
+### No debemos de olvidarnos del atributo key, y pasaremos la prop el (datos del elementos).
+
+Al añadir el atributo *_el_* al componente, éste será enviado como prop {el} `export const CrudTableRow = ({el}) =>`, para así poder pintar el DOM con la initialDb.
+```js
+<tr>
+    <td>{el.name}</td>
+    <td>{el.constellation}</td>
+    <td>
+        <button>Editar</button>
+        <button>Eliminar</button>
+    </td>
+</tr>
+```
+
+---
+
+# 29. CRUD App: Inserción de datos (2/4)
 
 
 
