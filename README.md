@@ -539,6 +539,86 @@ Al añadir el atributo *_el_* al componente, éste será enviado como prop {el} 
 
 # 29. CRUD App: Inserción de datos (2/4)
 
+Comenzamos creando una `const createData = (data) => {}`. Esta función creara un nuevo registro en nuestra base de datos falsa. Recibira el objeto data con la info que usará para crear dichos datos. También necesitamos una `const updateData = (data) => {}`. Tambien necesita la data para la actualización de la base de fatos falsa. Y por ultimo creamos la `const deleteData = (id) => {}`, que sólo necesita la id para poder acceder a dicha prop y eliminar la data que queramos.
+
+Luego dentro del CrudApp creamos el estado `const [dataToEdit, setDataToEdit] = useState(null)` para la inserción y actulaización de la información.
+
+El formulario recibirá 4 propiedades (1 valor y 3 funciones) que se encargaran de la creación, actualización, y la var de estado para diferenciar entre create y update => dataToEdit y la función que la actualiza => setDataToEdit.
+---
+Para eliminar pasaremos el deleteData al CrudTable. Tambien necesita la función actualizadora para el botón de editar.
+
+```js
+const createData = (data) => {}
+const updateData = (data) => {}
+const deleteData = (id) => {}
+
+export default function CrudApp() {
+    ...
+    const [dataToEdit, setDataToEdit] = useState(null)
+    ...
+            <CrudForm
+                createData={createData}
+                updateData={updateData}
+                dataToEdit={dataToEdit}
+                setDataToEdit={setDataToEdit}
+            />
+            <CrudTable data={db} setDataToEdit={setDataToEdit} deleteData={deleteData}/>
+}
+```
+
+Recordemos que el evento handleChange actualiza los datos del form. Y para hacerlo todo de una manera más automatica, pasaremos el estado con el spread-operator, y luego el input que se esté actualizando, utilizamos la destructuracion para que la prop name del inpuit la tome como atributo del objeto que se está construyendo ahora, y se le asigna su respectivo valor.
+```js
+const handleChange = (e) => {
+    setForm({
+      ...form,
+      [e.target.name]: e.target.value,
+    })
+  }
+```
+Como vamos a controlar mediante js el evento del form, añadiremos ``e.preventDefault()`` al handleSubmit para que no se autoprocese el formulario. Agregaremos un condicional por si los inputs se envían vacíos con:
+```js
+if(!form.name || !form.constellation){
+      alert("Datos incompletos")
+      return;
+    }
+```
+Para la validación del id, segun queramos añadir o editar datos, debemos de realizar la destructuración de las props padres provenientes del CrudForm en CrudApp. `export const CrudForm = ({createData, updateData, dataToEdit, setDataToEdit}) =>`. Si el id viene nulo, se ejecutara createData, recibiendo la data proveniente del estado inicial initialForm, y esta var de estado se pasara justamente por el handleSubmit al componente padre, y la data de `const createData =(data) =>{}` se convierte en el valor del form que estemos trabajando.
+En cambio, si el id no viene vacío, significa que queremos editar dicho id.
+Para finalizar ejecutaremos en handleReset() para limpiar el fomrulario.
+```js
+const handleSumbit = (e) => {
+    e.preventDefault()
+
+    if(!form.name || !form.constellation){
+      alert("Datos incompletos")
+      return;
+    }
+
+    if(form.id === null){
+      createData(form)
+    } else {
+      updateData(form)
+    }
+
+    handleReset()
+  }
+```
+Recordemos que este formulario esta controlado por la var de estado form, entonces debemos utilizar la funcion `` setForm()`` que actualiza dicha variable igualandola a la ``initialForm`` para que el name, constelattion y id queden limpios. Tambien deberíamos resetear setDataToEdit a nulo como se encuentra en el componente padre. Para que se muestre la data que envíemos por el form en el DOM, usaremos la función ``createData``...debemos de ejectuar la función `setDb` de la variable de estado que poseemos en `initialDb`, y cómo esta es un arreglo, debemos de decirle que se traiga la base de datos como exista con el spread operator (el spread O combina lo que venga en db con lo consiguiente, en este caso, con la data) y agregale la data. Previamente creamos un id.
+```js
+export default function CrudApp() {
+    const [db, setDb] = useState(initialDb)
+    const [dataToEdit, setDataToEdit] = useState(null)
+
+    const createData = (data) => {
+        data.id = Date.now();
+        setDb([...db,data])
+     }
+     ...
+}
+```
+
+---
+
 
 
 
