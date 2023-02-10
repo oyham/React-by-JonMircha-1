@@ -619,7 +619,83 @@ export default function CrudApp() {
 
 ---
 
+# 30. CRUD App. Edición de datos y comunicación entre componentes (3/4)
+Destructuramos las props del CrudApp padre hacia el componente hijo y se las pasamos a la CrudTableRow.
+```js
+export const CrudTable = ({ data, setDataToEdit, deleteData }) => {
+    return (
+     ...
+        data.map(el => (
+            <CrudTableRow
+                key={el.id}
+                el={el}
+                setDataToEdit={setDataToEdit}
+                deleteData={deleteData}
+            />
+        ))
+    )}
+    ...
+```
+Luego en el CrudTableRow destructuramos las ultimas dos props envíadas y además destructuramos elements `let {name,constellation,id} = el` para simplificar.
 
+Para la ejecución de la edición debemos de asigarle al button ``'editar'`` el evento ``onClick`` para activar el evento en formato de arrow function llamando asi a la función setDataToEdit, que esta en el CrudApp, actualiza esa variable que se encontraría en nula, por eso pasamos todo el objeto *el*, ya que posee los datos.
+ Y para el button ``'eliminar'`` va a desencadenar el deleteData, que se encuentra en CrudApp, y sólo necesita el id, por eso se lo debemo de pasar... al hacer click propaga hacia arriba, pasando el id de la fila en la que estemos. 
+Esta propagación que estamos realizando se da en 3 pasos. ``CrudApp => CrudTable => CrudTableRow`` y viceversa. Si fuera algo mas complejo podriamos estar utilizando Context. Más adelante lo veremos.
+
+``!Explicación:`` Al hacer click en el button ``'editar'`` enviaremos el *el* a CrudTable, y está a CrudApp. setDataToEdit modifica el estado 'dataToEdit' y poseera toda la data que traía dicho *el* en esa fila *CrudTableRow*.
+```js
+export const CrudTableRow = ({el, setDataToEdit, deleteData}) => {
+    let {name,constellation,id} = el
+    return (
+        <>
+            ...
+                <td>{name}</td>
+                <td>{constellation}</td>
+                ...
+                    <button onClick={()=> setDataToEdit(el)}>Editar</button>
+                    <button onClick={()=> deleteData(id)}>Eliminar</button>
+            ...
+        </>
+    )
+}
+```
+Seguimos ahora en el CrudForm creando un useEffect para el `dataToEdit` diciendo que el efecto se ejecute cuando dataToEdit cambie. Sabemos que el valor inicial de `dataToEdit` es *null* entonces a traves de un condicional ejectuamos `setForm(dataToEdit)`  para que los datos de esa fila pasen al formulario. Sino ejecutamos el else con `setform(initialForm)`. 
+```js
+useEffect(() => {
+    if(dataToEdit){
+      setForm(dataToEdit)
+    } else {
+      setForm(initialForm)
+    }
+   }, [dataToEdit])
+```
+!El objeto `dataToEdit` traera el nombre del caballero, la constelación y el id de la fila donde presionamos el botón editar.
+
+Ahora para la updateData actualizaremos la db con un operador ternario. Ya que es un arreglo, debemos de ejecutar un map en una nueva variable para guardar dicho resultado, debemos de verificar a traves del map si se encuentra algun id ya existente para modificar dicha posición. 
+```js
+const updateData = (data) => {
+        let newData = db.map(el => el.id === data.id ? data : el);
+        setDb(newData)
+    }
+```
+Aqui decimos que por cada *el* en db verifique el id, y si el id es igual a lo que recibes como dato.id (en su posición id) entonces en esa posición remplazamos la data que esta siendo pasada, sinó el *el* se conserva igual.
+
+Gracias al estado de dataToEdit podemos utilizar un solo form para la creación y la edición de datos.
+---
+
+!En el CrudForm, cuando el ``form.id`` es nulo, ejecuta el createData; cuando ya tiene datos, se ejecuta el updateData. **_*¿Cuando este form va a tener datos?*_** Cuando el usuario pulse cualquiera de los botones de editar, se pasa el objeto *el* en ``setDataToEdit``... se regresa hasta CrudApp, y al ejecutarse el setDataToEdit se actualiza la variable `dataToEdit` por el objeto que tragia *el* y entonces ahí como el form recibe la ``dataToEdit``, el CrudForm posee un efecto que está evaluando cualquier cambio que se ejecute en ``[dataToEdit]`` (que recibe como *prop*) y dependiendo de eso actualíza el estado del form con los datos que recibe o con los datos iniciales.
+```js
+ useEffect(() => {
+    if(dataToEdit){
+      setForm(dataToEdit)
+    } else {
+      setForm(initialForm)
+    }
+   }, [dataToEdit]) //Parametro condicional. Al cambiar dataToEdit se ejecuta este efecto.
+```
+Por ulitmo para que el h3 cambie segun estemos agregando nueva data o editando data existente, utilizaremos un conditional render. ````<h3>{dataToEdit ? `Editar` : `Agregar`}</h3>````
+
+---
 
 
 
