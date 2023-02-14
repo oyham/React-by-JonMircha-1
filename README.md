@@ -697,6 +697,145 @@ Por ulitmo para que el h3 cambie segun estemos agregando nueva data o editando d
 
 ---
 
+# 31. CRUD App. Eliminación de datos y estilos CSS (4/4)
+
+Esta fue mi solución para la eliminacion de datos: 
+```js
+let newData = initialDb.filter(data => data.id !== id);
+        setDb(newData)
+```
+
+Pero siguiendo el curso, se recomienda preguntarle al usuario si está seguro de eliminar dicho dato utilizando un confirm... o algunos casos windows.confirm. 
+En la solución de jon, la diferencia es que el hace un filter de db y no de initialDb y tiene sentido... aunque a mi también me funcionó con initialDb.
+```js
+if(isDelete){
+    let newData = db.filter(el => el.id !== id)
+        setDb(newData) 
+    } else {
+        return
+    }
+```
+
+---
+---
+---
+
+# 32. CRUD API. Creando una API con JSON Server (1/5)
+#### instalación global de json-server `npm i -g json-server`.
+
+Empezamos creando un archivo en *components* llamado **CrudApi.jsx** una carpeta en src llamada *api* y dentro creamos el archivo **db.json**, y le pasamos el initialDb de los caballeros que creamos anteriormente.
+Tambien crearemos un comando para el início del json-server, ademas de indicarle un puerto diferente al 3000, aunque vite un puerto 5173.
+`"fakeapi":"json-server --watch src/api/db.json --port 5000"`
+Esto se crea en el archivo `package.json/scripts`. Y tan solo debemos de ejecutar `"npm run fakeapi"` para el levantamiento del db.json.
+
+Luego copiamos todo lo del CrudApp y lo pasamos a CrudApi 
+
+---
+
+# 33. CRUD API. Creación de helper para peticiones AJAX (2/5).
+#### creación de una carpeta en *src* llamda *helpers*.
+
+### Mientras que un componente es un código que tiene parte visual, html,css, y js... un Helper es una función que te ayuda a resolver una tarea cómo un componente, pero es más de lógica abstracta que UI. 
+
+Crearemos una míni libreria que resuelva peticiones HTTP vía arquitectura REST.
+
+##### REST deriva de "REpresentational State Transfer"
+
+**¿Por que no se creó un hook en vez de un helper?** Para que un código sea un Hook personalizado, internamente, dentro de su programaciónm se deben utilizar hooks de react `useState, useEffect, useRef...`, pero si realmente no utilizamos ningún hook de react,  no sería un hook personalizado en sí. Por eso que esta pequeña míni libreria es un helper. Este helper no tendrá nada de código React, eso significa que este helper está escrito %100 en vanilla JS.
+
+Empezamos creando una `const customFecth = () =>{}` dentro de la función padre `export const helpHttp = () =>{}` siendo *customFetch* privada, o sea, no se exportara, no se expondrá.
+
+Realizaremos el CRUD bajo la arquitectura REST, y devolveremos un objeto con las peticiones get,post,put,del(delete).
+```js
+export const helpHttps = () => {
+    const customFetch = () => { }
+
+    const get = () => { }
+    const post = () => { }
+    const put = () => { }
+    const del = () => { }
+
+    return {
+        get, post, put, del
+    }
+}
+```
+El customFetch será ejecutado internamente por los 4 métodos REST. La petición Fetch necesita el endpoint que hace referencia hacia la ruta, y la serie de opciones que pueda recibir Fetch. `const customFetch = (endpoint, options)`. Crearemos una `const defaultHeader = {}` ya que generalmente todas las peticiones realizadas como por ej la libreria axios, toda la *data* la devuelven en formato **json**. 
+```js
+const defaultHeader = {
+        accept: "application/json"
+    }
+```
+**!AbortController**: es un objeto que sirve por si la petición fetch realizada da un error... si es que la base de datos se encuentra caída por **x** motivo o en mantenimiento, y en ese caso nuestro `loader` quedaría mostrandose en la UI por tiempo indeterminado ya que no recibe ninguna respuesta. Es una solución a este problema.
+`const controller = new AbortController();`. Dentro del objeto de opciones que posee nuestro `customFetch` debemos de agregar el abortController. Para hacer esto debemos de indicar que dentro del objeto que nos está pasando el usuario, de las opciones de la peticion fetch, agreguemos una peticion llamada signal. Esta agregara el obj controler **+** una propiedad llamada **signal**.
+Esto sería un manejador de errores por si nuestro endpoint no nos responde. Puede ser controlado por el usuario o por nuestra cuenta con un SetTimeOut.
+
+Otra opción que necesita la petición Fetch es el método. Indicamos que si el usuario en el objeto de opciones trae método entonces deja el método. Pero si no viene el método específicado, indicaremos por default que se utilizará GET.
+
+Si el usuario especifíca headers, debemos de combinarlas con las defaultHeader que especifíquemos. Para eso crearemos un nuevo objeto que mezcle las dH con un spread-operator.Todo esto utilizando un operador ternario.
+Si las peticiones tienen la funcion de mandar datos, recordedmos que exíste una *prop* llamada **body** en las peticiones Fetch. Ya que estamos diciendo que nuestro helpHttp va a aceptar el formato por defecto ``"aplication/json"``, al body debemos de convertirlo a cadena con el metodo ``json.stringify `` ya que viene parseado. Y asi se manda como cadena de texto hacia el backend.
+ Si el usuario realiza una petición ``"GET"``, no se mandan datos, solamente se recíbe. Entonces esta option.body no esté especificada dentro de las options que nos haya mandado el user cuando quiera hacer su petición por ``"GET"``, por eso debemos de decirle al options.body que en ese caso sea **"false"**. ¿Por que estamos diciendo que si no viene options.body lo iguale a falso? Porque si el body es falso, lo elimíne, ya que si realizamos una petición ``"GET"`` no necesitamos mandar un body. 
+
+### !No podemos mandar dentro del objeto de opciones de nuestra petición fetch un body vacío o falso, por eso lo eliminamos, para que no marque ningun mensaje de error.
+Añadimos el setTimeOut para la activación del controller.
+```js
+const controller = new AbortController();
+        options.signal = controller.signal;
+        options.method = options.method || "GET";
+        options.headers = options.headers
+            ? { ...defaultHeader, ...options.headers }
+            : defaultHeader;
+
+        options.body = JSON.stringify(options.body) || false;
+        if(!options.body) delete options.body;   
+        console.log(options)      
+        setTimeout(() => controller.abort(), 3000);
+```
+
+Lo siguiente que haremos es que la función devuelva la ejecucion de una petición fetch, con la url en su endpoint y sus opciones.Tambien ejecutaremos then y catch, o sea que este customFetch está devolviendo una promesa. En el caso del then, vamos a hacer que devuelva la res con un operador ternario, en caso de que no haya res, se rechaza la promesa con un objeto de error. Y en caso de error, devolverá el error.
+```js
+return fetch(endpoint, options)
+            .then((res) =>
+                res.ok
+                    ? res.json()
+                    : Promise.reject({
+                        err: true,
+                        status: res.status || "00",
+                        statusText: res.statusText || "Ocurrió un error"
+                    })
+            )
+            .catch((err) => err)
+```
+---
+Para finalizar debemos de utilizar el customFetch en los métodos.
+- **GET:** El metodo get recibe una url, y capaz pueda recibir opciones, pero sinó, utilizaremos definicion de params por defecto especifícando que options será un obj vacío. Get ejecturaia customFetch, pasandolé el url y opciones.
+
+- **POST:** Necesita url y opciones. Cómo es un metodo post no podemos utilizar el return implícito como en GET. Hay que decirle que cómo es post, hay que agregarle al obj options la prop metodo sea iguál a POST. Indicamos el return con url y options.
+
+- **PUT:** Exactamente que POST y DELETE. 
+
+- **DELETE:** Exactamente que POST y PUT. 
+
+#### options.method = (metodo http) => get,post,put,delete.
+```js
+const get = (url, options = {}) => customFetch(url, options)
+
+    const post = (url, options = {}) => {
+        options.method = "POST";
+        return customFetch(url, options)
+    }
+    const put = (url, options = {}) => {
+        options.method = "PUT";
+        return customFetch(url, options)
+    }
+    const del = (url, options = {}) => {
+        options.method = "DELETE";
+        return customFetch(url, options)
+    }
+```
+
+---
+
 
 
 
