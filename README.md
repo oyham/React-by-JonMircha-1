@@ -862,6 +862,75 @@ useEffect(() => {
 ```
 ---
 
+# 35. CRUD API. Implementando loaders y mensajes de errores (4/5)
+Añadiremos dos variables de estado para estas nuevas funciones.
+```js
+const [error, setError] = useState(null)
+const [loading, setLoading] = useState(false)
+```
+El CrudForm siempre está, pero el componente que se va a renderizar dinamicamente si hay datos o no, es el CrudTable. Primero debemos de preguntarnos si la variable loading es verdadera, entonces renderizar ``<Loading />``... lo mismo con el error.
+```js
+{loading && <Loader />}
+{error && <Message />}
+```
+Cambiaremos la base de datos de un array vacío a nula. Esto nos arrojará un error en consola por la prop ``data.length`` en CrudTable. Para solucionar esto debemos de ejectuar un conditional render en el CrudTable.
+```js
+{db && <CrudTable
+    data={db}
+        etDataToEdit={setDataToEdit}
+    deleteData={deleteData}
+/>}
+```
+Entonces, como en principio SI existe una db, el CrudTable es renderizado y ya no marcará ningún error.
+El siguiente paso sería actualizar el setLoading a true para que se vea el componente del loader, y colocarlo en falso al final del resultado de la promesa de la petición "GET". Luego para el error, dentro del ``if else`` donde actualizamos la db de la app, ejecutamos ``setError(res)`` con el valor de la respuesta.
+```js
+    useEffect(() => {
+        setLoading(true)
+        api.get(url).then((res) => {
+            // console.log(res)
+            if (!res.err) {
+                setDb(res)
+                setError(null)
+            } else {
+                setDb(null)
+                setError(res)
+                // return;
+            }
+            setLoading(false)
+        })
+    }, [])
+```
+Ahora descargamos de loading.io un loader, con su respectivo código css y html. Solo debemos de cambiar el class por className en el código html por que recordemos que React trabaja con jsx.
+
+Ahora con el componente Message, se puede utilizar para envíar mensajes de errores cómo de exíto, de alertas o informativos. Para eso pasaremos dos propiedades. El mensaje que va a imprimir, y el respectivo color. `const Message = ({msg, bgColor}) =>`. Seguimos con la aplicación de estilos en el mismo componente.
+
+```js
+const Message = ({msg, bgColor}) => {
+    let styles = {
+        padding: "1rem",
+        marginBottom: "1rem",
+        textalign: "center",
+        color: "#fff",
+        fontWeight: "bold",
+        backgroundColor: bgColor
+    }
+    return (
+        <div style={styles}>
+            <p>{msg}</p>
+        </div>
+    )
+}
+```
+Ahora... debemos de enviar las props a través de Message desde CrudApi.
+```js
+{error && <Message
+                msg={`Error ${error.status}: ${error.statusText}`}
+                bgColor="#dc3545" />}
+```
+Recordemos que este mensaje sólo se va a renderizar cuando exista un error. ``status`` y ``statusText`` provienen de la Promise del helper.
+
+---
+
 
 
 
