@@ -836,6 +836,31 @@ const get = (url, options = {}) => customFetch(url, options)
 
 ---
 
+# 34. CRUD API. Inicializar el estado con AJAX (3/5)
+Creamos un `let api = helpHttp()` para simplificar el llamado del useHttp, adicionalmente crearemos `let url = "http://localhost:5000/santos"` para no estar escribiendo el endpoint del json-server.
+
+Si la base de datos inicia vacía `const [db, setDb] = useState([])` debemos de utilizar un useEffect para que se vaya cargando la data indicando que la api utilice el metodo "GET", pasandole así la url... y recordemos que nuestro helper devuelve una promesa, entonces podemos utilizar un ``.then()`` para indicarle que nos muestre la res por consola.
+```js
+useEffect(() => {
+      api.get(url).then((res)=> console.log(res))
+    }, [])
+```
+Al ejecutar la carga del DOM, veremos que primero la consola nos arroja el console.log(options) que existe en helpHttp, y luego la res del api. En el primer metodo "``GET``", solo pasamos la url... entonces el helper al no recibir opciones, empieza a construirlas con la lógica que implementamos. Recordemos que tambien nos puede arrojar un error, ejemplo si escribimos mal el URL.
+Una vez recibida la res del useEffect, debemos de guardarla en nuestra db para que sea mostrada en el DOM. Para eso utilizaremos un operador ternario, diciendo que cuando la respuesta no tenga una prop llamada **err**, entonces ejecutemos la funcion actualizadora de estado setDb con la respuesta, y sinó que devuelva un return vacío.
+```js
+useEffect(() => {
+      api.get(url).then((res) => {
+        // console.log(res)
+        if(!res.err){
+            setDb(res)
+        } else {
+            // setDb(null) 
+            return;
+        }
+    })
+    }, [])
+```
+---
 
 
 
