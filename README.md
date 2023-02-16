@@ -931,6 +931,124 @@ Recordemos que este mensaje sólo se va a renderizar cuando exista un error. ``s
 
 ---
 
+# 36. CRUD API. Peticiones HTTP a la API (5/5)
+Debemos de modificar create, update y delete Data.
+
+- **createData:** indicamos que se ejecute la función ``helpHttp()`` con post, pasandole la url y el objeto de opciones de la petición fetch, envíando el body que sacamos de la data. Recordemos que la respuesta es una ``promesa``, entonces puede devolver un msje de éxito o de error. Podemos utilizar un condicional según sea la res recibída.
+Si no viene ningun err desde la res, entonces podemos setear la db con lo que venga en res. Y si hay algun error, seteamos el error con la res.
+```js
+    const createData = (data) => {
+        data.id = Date.now();
+        api.post(url,{body:data}).then((res)=>{
+            console.log(res);
+            if(!res.err){
+                setDb([...db, data])
+            } else {
+                setError(res)
+            }
+        })
+    }
+```
+Ahora si realizamos un post, se añade a la tabla la data nueva, pero si vamos al db.json, veremos que sólo existe un id:"6" y nada más. Al recargar la página, aparece en la tabla el elemento pero vacío, respectivamente por que en db.json no se guardó name ni constellation. 
+**!¿ID 6?**: json tiene la capacidad de generar un id autonumérico. No respeto el id con Date.now();
+Debemos de especificar en el objeto de opciones, el contenty-type (atributo) cómo forma de cabecera. Tambien separamos las opciones así queda mejor ordenado el código.
+```js
+let options = {body:data, headers:{"content-type":"application/json"}}
+
+api.post(url,options).then((res)=>{
+```
+¿Por que no añadimos el content-type:application/json a las defaultHeaders? Porque cada api trabaja de manera diferente, posteriormente veremos una api que con esta función no funciona. Por eso no se recomienda colocarla por default.
+
+- **updateData**: Para el update debemos añadirle a la url el id del endpoint que vamos a actualizar. Crearemos una `let endpoint = `${url}/${data.id}``, es la unión de la url + la data que viene el form, y cuando hacemos una edición ya trae el ID. En ``api.put`` debemos de indicar el endpoint y lo demás queda exactamente igual que en createData.
+```js
+    const updateData = (data) => {
+        let endpoint = `${url}/${data.id}`
+        let options = {
+            body:data, 
+            headers:{"content-type":"application/json"}
+        }
+        api.put(endpoint,options).then((res)=>{
+            if(!res.err){
+                let newData = db.map(el => el.id === data.id ? data : el)
+                setDb(newData)
+            } else{
+                setError(res)
+            }
+        })
+    }
+```
+
+- **deleteData**: Pra el delete necesitamos el endpoint pero sin la data ya que deleteData solo recibe el id. En opciones no necesitamos un body:data por el mismo motivo anterior. Luego queda igual que el deleteData de CrudApp. Recordar que debemos de utilizar api.del ya que asi está especificado en neustro helper.
+```js
+    const deleteData = (id) => {
+        let isDelete = confirm(`Estás seguro ded elimninar el registro con el id '${id}'`)
+        if (isDelete) {
+            let endpoint = `${url}/${id}`
+            let options = {
+                headers: { "content-type": "application/json" }
+            }
+            api.del(endpoint, options).then((res) => {
+                if (!res.err) {
+                    let newData = db.filter(el => el.id !== id)
+                    setDb(newData)
+                } else {
+                    return
+                }
+            })
+        } else {
+            return
+        }
+    }
+```
+
+
+!data.map is not a function
+---
+Este error lo encontré por mi cuenta y ahora Jon está dando la solución. Es un error de lógica. Recordemaos que neustra db comienza en null y que estamos preguntando si data.length === 0. Recordemos que react funciona con jsx y que estas validaciones tienden a fallar según la lógica que queramos mostrar por asi dedcirlo. En vez de utilizar === utilizaremos > , además de invertir la lógica haciendo que primero se haga el mapeo de la data para el renderizado del CrudTableRow.
+Pasariamos de esto:
+```js
+<tbody>
+    {data.length === 0 ? (
+        <tr>
+            <td colSpan="3">Sin datos</td>
+        </tr>
+    ) : (
+        data.map(el => (
+            <CrudTableRow
+                key={el.id}
+                el={el}
+                setDataToEdit={setDataToEdit}
+                deleteData={deleteData}
+            />
+        ))
+    )}
+</tbody>
+```
+A esto:
+```js
+<tbody>
+    {data.length > 0 ? (
+        data.map(el => (
+            <CrudTableRow
+                key={el.id}
+                el={el}
+                setDataToEdit={setDataToEdit}
+                deleteData={deleteData}
+            />
+        ))
+    ) : (
+        <tr>
+            <td colSpan="3">Sin datos</td>
+        </tr>
+        
+    )}
+</tbody>
+```
+**Recomendación**: que todo los valores que sean true it sea la primera opción de los condicionales, y que lo vaya tendiendo a falso pase a la segunda opción (else).
+
+---
+
+
 
 
 
