@@ -1176,6 +1176,24 @@ useEffect(()=>{
     },[search])
 ```
 
+---
+# 40. Buscador de Canciones. Renderizado condicional de datos (4/5)
+Aplicaremos un conditional render en nuestro songsearch. Recordemos que search empieza en nulo... entonces diremos que si search posea algo y cuando loading sea falso entonces renderice songdetail.
+```js
+{search && !loading && (
+    <SongDetails search={search} lyric={lyric} bio={bio} />
+)}
+```
+Primero para evitar renderizados innecesarios haremos un return null en details si lyric o bio se encuentran en nulo.`if(!lyric || !bio) return null`. Y cuando si posean datos, haran el return del componente. Ahora haremos renderizados condicionales para la letra y la info del artista.
+Colocaremos las prop msg y bgColor para el respectivo mensaje de error.
+```js
+   {lyric.error || lyric.name === "AbortError" ? <Message msg={`Error: no existe la canción: ${search.song}`} bgColor="#dc3545"/> : <SongLyric />}
+   {bio.artists ? <SongArtist /> : <Message msg={`Error: no existe el artista: ${search.artist}`} bgColor="#dc3545"/>}
+```
+Recordemos añadir `lyric.err` ya que es el error que arroja nuestra promesa en caso de que alguna de las peticiones falle. `{lyric.error || lyric.err || lyric.name === "AbortError"...`
+
+---
+
 
 
 
