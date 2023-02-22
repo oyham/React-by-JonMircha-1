@@ -1129,6 +1129,52 @@ const SongForm = ({ handleSearch }) => {
 
 export default SongForm
 ```
+---
+# 39 Buscador de Canciones. Peticiones AJAX a las APIs (3/5)
+#### Recordemos que para las peticiones asíncronas debemos trabajarlas con un useEffect.
+
+!Este efecto va a estar esperando las **res** de estas 2 apis y mientras se ejecutan y esperan...para evitar renderizados innecesarios agregageros un condicional diciendo que si search es identico a nulo que retorne, por que mientras la petición hace la busqueda search va a comenzar con su valor nulo.
+
+Cómo utilizaremos ``asyn await`` debemos de crear una const declarada dentro del useEffect, declararla asíncrona y al final ejecutarla.
+
+Search poseera 2 valores, el artista y la canción, entonces debemos de **destructuralo** dentro de fetchData con {}. Luego guardaremos en variables  los endpoints. Importante copiar el url con el protocolo ``https`` interpolando las variables artist y song.
+#### La API del theaudiodb posee sólo la data de coldplay de forma gratuita. Asi que al utilizar otro artista la api arrojará error.
+
+Cómo necesitamos tener ambas informaciones para construir la UI (artist y song) utilizaremos el metodo **All** del constructor **Promise** para que espere ambas peticiones. El setLoading lo utilizaremos dentro del fetch, actualizando la vde de false a true, y luego del await de la petición, convertirla a false nuevamente.
+
+Debemos de destructurar el **Promise.all()** ya que recibe un arreglo con todas las peticiones fetch que querramos hacer, entonces podemos ir guardando en variables dinamicamente gracias a la destructuración de arreglos. Dentro del promise.all debemos de utilizar el ``helper`` para obtener la data, enviando el endpoint, y nuevamente llamar al helper para la petición de la canción. Entonces...
+La **res** de la primer promise se guarda en la primer var ``(artistUrl > artistRes)`` y así sucesivamente.
+Las res artist (o las res) ya vendrá parseada y en formato json justamente por el helper.
+Estos datos se guardaran en las vde ``bio`` y ``lyric``.
+```js
+useEffect(()=>{
+        // helpHttp()
+        if(search===null) return;
+
+        const fetchData = async()=>{
+            const {artist, song} = search
+
+            let artisUrl =`https://www.theaudiodb.com/api/v1/json/2/search.php?s=${artist}`
+            let songUrl =`https://api.lyrics.ovh/v1/${artist}/${song}`
+            
+            console.log(artisUrl,songUrl)
+
+            setLoading(true)
+
+            const [artistRes, songRes] = await Promise.all([
+                helpHttp().get(artisUrl),
+                helpHttp().get(songUrl),
+            ])
+
+            console.log(artistRes,songRes)
+            setBio(artistRes)
+            setLyric(songRes)
+            setLoading(false)
+        }
+
+        fetchData()
+    },[search])
+```
 
 
 
