@@ -1048,6 +1048,26 @@ A esto:
 
 ---
 
+# 37. Buscador de canciones. Definición de componentes y lógica (1/5)
+
+Cremos SongSearch ademas de los componentes para la UI de songform y songdetails.
+
+### ¿Que necesitamos? (haciendo referencia a las variables de estado).
+- Necesitamos una vde que guarde la búsqueda.
+- Necesitamos una vde que guarde la información del artista.
+- Necesitamos una vde que guarde la información de la canción.
+- Necesitamos una vde que controle la visibilidad del loader.
+### Los useEffect los utilizaremos mas adelante a la hora de trabajar con las APIS.
+
+Creamos SongArtis y SongLyric como componentes separados para importarlos en Details.
+Luego importamos en Loader por sobre el songform. Al hacer esto el Loader se muestra en la **UI** de manera automática, pero para que no se muestre debemos de vincular la vde ``loading`` con un conditional render diciendo que si ``loading es verdadero`` entonces renderice el **Loader**, pero como inicializa en *false* no se muestra.`{loading && <Loader />}`
+
+Pasaremos como *prop* handleSearch creada previamente `const handleSearch = (data => {}`. Tendrá la función de manejar la vde search. Y a SongDetails envíaremos las props search, liryc y bio.
+
+#### Estos pasos pueden llamarse como la maquetación inicial y mapeado de propiedades.
+
+---
+
 
 
 
