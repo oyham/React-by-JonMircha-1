@@ -1068,6 +1068,68 @@ Pasaremos como *prop* handleSearch creada previamente `const handleSearch = (dat
 
 ---
 
+# 38. Buscador de Canciones. Programación de formulario (2/5)
+
+Empezamos creando tres inputs para el formulario, dos tipo texto para la inserción de datos, y el submit.
+La mejor forma de interactuar con los forms y lo ideal es tener los formularios controlados a partir de una variable de estado initialFrom, iniciando las props del form inicializandolas en nulos, para así poder asignar las props values y onChange. Creamos el **e** handleChange y pasamos las props a los dos inputs del form.
+ **_E_** onChange y el valor que van a estar controlando. 
+
+El evento *handleChange* lo que tiene que hacer es actualizar el estado, utilizando la función setForm. Esta tomará una copia del objeto formulario (initialForm) utilizando el *spread-operator*, y lo va a combinar con el valor del target del evento, pero antes debemos de específicar de dónde proviene el valor del evento... accediendo con [] al name **(los [] hace dinámica la propiedad en el objeto).**  
+
+Luego creamos el handleSubmit con su e.preventDefault y pasandolo como prop al onSubmit del form. Añadimos un if para verificar que el nombre del artista o la canción no vengan vacías, y si es así retornamos para que no siga leyendo el manejador.
+
+### ¿Y si no vienen vacíos los inputs? handleSearch().
+Recordemos que al songForm le pasamos como prop el handleSearch. En el componente principal recibe la *data*. La data justamnete sera el objeto form (vde). Al ejecturala le pasamos lo que venga en la vde form, y cómo el formulario en este punto ya se estaría procesando, debemos de limpiarlo inicializandolo a los valores por default.
+
+Los valores del formulario pasan a traves del evento hacia una variable de estado pero de su componente padre.
+```js
+import React, { useState } from 'react'
+
+const initialForm = {
+    artist: "",
+    song: "",
+}
+
+const SongForm = ({ handleSearch }) => {
+    const [form, setForm] = useState(initialForm)
+
+    const handleChange = (e) => {
+        setForm({
+            ...form,
+            [e.target.name]:e.target.value,
+        })
+    }
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+
+        if(!form.artist || !form.song){
+            alert("Datos incompletos")
+            return;
+        }
+
+        handleSearch(form)
+        setForm(initialForm)
+    }
+
+    return (
+        <>
+            <form onSubmit={handleSubmit}>
+                <input type="text" name='artist' placeholder='Nombre del interprete'
+                    onChange={handleChange} value={form.artist}
+                />
+                <input type="text" name='song' placeholder='Nombre de la canción'
+                    onChange={handleChange} value={form.song}
+                />
+                <input type="submit" value='Enviar' />
+            </form>
+        </>
+    )
+}
+
+export default SongForm
+```
+
 
 
 
