@@ -1193,6 +1193,44 @@ Colocaremos las prop msg y bgColor para el respectivo mensaje de error.
 Recordemos añadir `lyric.err` ya que es el error que arroja nuestra promesa en caso de que alguna de las peticiones falle. `{lyric.error || lyric.err || lyric.name === "AbortError"...`
 
 ---
+# 41. Buscador de Canciones. Renderizado de UI y estilos CSS (5/5)
+Para añadir etiquetas html ej <em> debemos de cambiar un poco el componente message.
+Añadiremos un <p /> con la prop dangerouslySetInnerHtml igualandolo a una prop dinámica con {} ademas de despues pasarle el objeto con {} y dentro debe de llevar "__html:" y la prop que querramos pasar.
+`<p dangerouslySetInnerHTML={{__html:msg}}/>` para poder utilizar:
+`msg={``Error: no existe la canción: <em>${search.song}</em>``}`. No es una buena práctica.
+
+Colocamos un <blockquote></blockquote> en lyric. Definición: blockquote -cita en bloque . Crea citas en bloque, marca las citas a otros autores o documentos.
+Para la inserción de la letra debemos de pasar las props title y lyrics desde Details. title va a ser igual a search.song y lyrics va a ser igual a lyric(prop del componente padre)+lyrics(objeto que nos pasa la api).
+`<SongLyric title={search.song} lyrics={lyric.lyrics}/>`.
+
+!Añadir el whiteSpace: pre-wrap para los saltos de linea que provengan del objeto que nos devuelve la api de lyrics ya que sinó no se mostrara en la UI. `style={{whiteSpace:"pre-wrap"}}`.
+
+Ahora para la información del artista, debemos de pasarle la prop a songartist desde songdetails con el nombre de artist. `? <SongArtist artist={bio.artists[0]}/>` recordemos que la información del artista la recibimos a traves de bio, esta, internamente posee artist, que es un arreglo, y en la primera posición proviene la información del artista (gracias a la API). Esto que hicimos es una simplificación.
+```js
+const SongArtist = ({ artist }) => {
+    return (
+        <section>
+            <h3>{artist.strArtist}</h3>
+            <img src={artist.strArtistThumb} alt={artist.strArtist} />
+            <p>{artist.intBornYear}-{artist.intDiedYear || "Presente"}</p>
+            <p>{artist.strCountry}</p>
+            <p>{artist.strGenre}-{artist.strStyle}</p>
+            {!artist.strWebsite.length === 0
+                ? <a href={`https://${artist.strWebsite}`} target="_blank" rel='noreferrer'>Sitio web</a>
+                : <p>No posee sitio web</p>
+            }
+            <p>{artist.strBiographyEN}</p>
+        </section>
+    )
+}
+```
+
+## RECOMENDACION: si un return devuelve un fragmento <></> puede causar complicaciones a la hora de ajustar con grid (por lo que vi hasta ahora), asi que colcamos un div donde teniamos fragments.
+
+---
+
+
+
 
 
 
