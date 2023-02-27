@@ -1194,12 +1194,12 @@ Recordemos añadir `lyric.err` ya que es el error que arroja nuestra promesa en 
 
 ---
 # 41. Buscador de Canciones. Renderizado de UI y estilos CSS (5/5)
-Para añadir etiquetas html ej <em> debemos de cambiar un poco el componente message.
+Para añadir etiquetas html ej <em></em> debemos de cambiar un poco el componente message.
 Añadiremos un <p /> con la prop dangerouslySetInnerHtml igualandolo a una prop dinámica con {} ademas de despues pasarle el objeto con {} y dentro debe de llevar "__html:" y la prop que querramos pasar.
 `<p dangerouslySetInnerHTML={{__html:msg}}/>` para poder utilizar:
 `msg={``Error: no existe la canción: <em>${search.song}</em>``}`. No es una buena práctica.
 
-Colocamos un <blockquote></blockquote> en lyric. Definición: blockquote -cita en bloque . Crea citas en bloque, marca las citas a otros autores o documentos.
+Colocamos un ``<blockquote></blockquote>`` en lyric. Definición: blockquote -cita en bloque . Crea citas en bloque, marca las citas a otros autores o documentos.
 Para la inserción de la letra debemos de pasar las props title y lyrics desde Details. title va a ser igual a search.song y lyrics va a ser igual a lyric(prop del componente padre)+lyrics(objeto que nos pasa la api).
 `<SongLyric title={search.song} lyrics={lyric.lyrics}/>`.
 
@@ -1227,6 +1227,38 @@ const SongArtist = ({ artist }) => {
 
 ## RECOMENDACION: si un return devuelve un fragmento <></> puede causar complicaciones a la hora de ajustar con grid (por lo que vi hasta ahora), asi que colcamos un div donde teniamos fragments.
 
+---
+
+# 42. Selects Anidados: Definición de componentes y lógica (1/3).
+Creamos los componentes SelectsAnidados y SelectList, utilizando **rafce**. Tambien crearemos un hook personalizado.
+
+Necesitamos 3 variables de estado para el manejo de los Estados Mexicanos. Estos se crearan en nuestro componente principal SelectsAnidados.
+```js
+    const [state, setState] = useState("")
+    const [town, setTown] = useState("")
+    const [suburb, setSuburb] = useState("")
+```
+Cada una de nuestras variables va a interactuar con nuestros SelectLists. Para ir mostrando las interacciones crearemos bajo el SelectList un pre > code > con las vde para ir visualizandolas.
+Las props que debemos de mandarle a nuestro SelectList son el título, la url y un manejador de evento handleChange, teniendo esta la función de controlar el cambio de los inputs de formulario para tenerlos vinculados
+a el estado de su componente, al cambio de su valor. Setearemos entonces el estado con lo que provenga del `e.target.value`. Así para los 3 componentes.
+```js
+<SelectList title='estados' url='' handleChange={(e)=>{setState(e.target.value)}} />
+```
+Para no mostrar los 2 ultimos selectores ya que si aún no elegimos estado no tendría mucho sentido que aparezcan en nuestra UI, utilizaremos un conditional render con los operadores de cortocircuito **&&** diciendo que si exíste uno renderiza el siguiente.
+```js
+{state && (
+    <SelectList title='municipios' url='' handleChange={(e) => { setTown(e.target.value) }} />
+)}
+{town && (
+    <SelectList title='colonias' url='' handleChange={(e) => { setSuburb(e.target.value) }} />
+)}
+```
+En el SelectList crearemos nuestro selector con una options dentro.
+```js
+    <select name="select" id="">
+        <option value="1">${}</option>
+    </select>
+```
 ---
 
 
