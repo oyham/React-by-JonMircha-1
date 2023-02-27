@@ -1260,7 +1260,62 @@ En el SelectList crearemos nuestro selector con una options dentro.
     </select>
 ```
 ---
+# 43. Selects Anidados. Hook personalizado para peticiones Fetch (2/3).
+Crearemos la carpeta hooks en src y el archivo useFetch.jsx, importando solo useState/Effect ya que sólo devolveremos lógica. Esta función recibira la url y poseera 3 vde, para la información, para los errores y para setear la ui según estén cargados los componentes o no. Toda esta lógica va a ejecutarse en una función de efecto.
+Esta va a tener el deber de hacer la petición correspondiente hacia la API, y retornara un objeto que tenga la data, el error y el valor del loading. Este efecto va a depender de la URL que reciba nuestro hook. 
+Tambien manejaremos el abort por si la petición fetch se demora o ocurre algún imprevisto. El return abort reemplaza al setTimeout que creamos posteriormente en el `helpHttp` ya que gracias al estar utilizando un hook personalizado estamos manejando toda la lógica dentro de un useEffect, y recordemos que éste posee una caracteristica que cada vez que el efecto termine (cómo para limpiar la memoria de nuestra aplicación)... todo lo que ejecutemos en el return sería la fase del desmontaje.
+```js
+    const [data, setData] = useState(null)
+    const [error, setError] = useState(null)
+    const [loading, setLoading] = useState(false)
 
+    seEffect(() => {
+        const abortController = new AbortController();
+        const signal = abortController.signal;
+
+        const fetchData = async () =>{}
+        
+        fetchData()
+
+
+        return () => abortController.abort();
+    },[url])
+```
+
+Cómo vamos a utilizar una función asíncrona, para poder capturar su error, vamos a utilizar un *trycatchfinally*. En el try crearemos la var res con el respectivo await del fetch(url). Seguimos con la validación de *ok*, propiedad que devuelve fetch, si viene falso crearemos la var err siendo un new Error y asignando err.status(convirtiendolo en objeto) res.status, y err.statusText a res.statusText. Luego utilizamos el return de errores *throw* con err para enviarlo a la parte del *catch*. Y si no hay ningún mensaje de error continuamos con la petición fetch para transformarla a formato json con su await. Sigue otra validación, preguntandos si signal.abort es falso significa que todo va bien, y actualizamos al var data con su funcion setData con el valor de la res en formato JSON, y la var setError la colocamos en nulo. En el *catch* tendremos un condicional similar suponiendo que el signal.abort no es ejecutado pero esta vez devuelve un error, setearemos la data en nulo y el error con su respectico *err*. 
+Finalmente colocamos un *finally* para setear otra parte importante. Sea lo que devuelva signal.aborted, el setLoading debe de colocarse en false.
+```js
+        const fetchData = async () =>{
+            setLoading(true)
+
+            try {
+                const res = await fetch(url)
+
+                if(!res.ok){
+                    let err = new Error("Error en la petición Fetch");
+                    err.status = res.status || "00";
+                    err.statusText = res.statusText || "Ocurrió un error"
+                    throw err;
+                }
+
+                const json = await res.json() 
+                if(!signal.abort){
+                    setData(json)
+                    setError(null)
+                }
+            } catch (err) {
+                if(!signal.abort){
+                    setData(null)
+                    setError(err)
+                }
+            } finally {
+                if(!signal.abort){
+                    setLoading(false)
+                }
+            }
+        }
+```
+---
 
 
 
