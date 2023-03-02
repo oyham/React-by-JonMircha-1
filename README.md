@@ -1316,7 +1316,62 @@ Finalmente colocamos un *finally* para setear otra parte importante. Sea lo que 
         }
 ```
 ---
+# 44. Selects Anidados. Renderizado de datos y estilos CSS (3/3).
+Importamos nuestro hook useFetch  en SelectList y destructuramos ``title,url y handleChange``. Además de destructurar data, error, y loading del useFetch(url) y poder utilizar estas variables.
+ Colocaremos un ``(!data) return null`` para renderizados innecesarios. 
 
+Añadimos un `label` con su etiquéta `htmlFor` que hace referencia al id que tenga el select. Lo formaremos dinamicamente creando `let id = ``select-${title}`. Esta variable la colocaremos como valor de htmlFor, name, y cómo valor del atributo id de nuestro select. Támbien añadimos ``{title}`` al label y colocamos en `options` > Eligue un {title}.
+
+Crearemos un `let label` que extraera el titulo con la propiedad charAt en la pisición 0, para convertirla en mayúscula, concatenandola con la propiedad title, pero cortandola con un `slice` para que empieze a escribirla en el caractér 1. Ésta reemplazara el {title} en nuestra `label`.
+Debemos de asignarle el evento handleChange que pasamos cómo *prop* al ``<select>`` en su atributo `onChange`.
+
+
+### *Un claro ejemplo de porqué separar el código en componentes es muy útil*
+Si no hubieramos hecho el componente SelectList, tódo el código que éste posée, lo deberíamos de haber replicado 3 veces en total en nuestro SecetsAnidados.
+
+#### Pequeño hack por jon:
+Para obtener la *response* de los estados, municipios y colonias, haremos uso del *title* que enviamos como prop desde SelectsAnidados para extraer dinamicamente los valores y guardarlas en un `let options = data.response[title]`.
+Ahora para generar de manéra automatica las respuestas obtenidas como opciones de nuestro select, haremos un mapeo de la variable options y por cada elemento crearemos una etiqueta option con el valor y texto de dicho *el*.
+`{data && options.map((el)=> <option value={el}>{el}</option>)}`.
+
+Colocaremos otro condicional por si existe un error, trayendo así nuestro componente Message.
+```js
+const SelectList = ({ title, url, handleChange }) => {
+  const { data, error, loading } = useFetch(url)
+
+  if (!data) return null;
+  if (error) {
+    return <Message msg={`Error ${error.status}: ${error.statusText}`} bgColor="dc3545" />
+  }
+
+  let id = `select-${title}`;
+  let label = title.charAt(0).toUpperCase() + title.slice(1);
+  let options = data.response[title]
+
+  return (
+    <>
+      <label htmlFor={id}>{label}</label>
+      {loading && <Loader />}
+      <select name={id} id={id} onChange={handleChange}>
+        <option value="">Elige un {title}</option>
+        {data && options.map((el) => <option value={el}>{el}</option>)}
+      </select>
+    </>
+  )
+```
+Para ir terminando con la lógica, debemos de guardar en una constante el TOKEN y pasar las url como *props*.
+Utiizaremos template strings para las interpolaciones del el TOKEN y ademas poder utilizar las vde ``state`` y ``town`` en las 2 ultimas urls.
+```js
+...
+    const TOKEN = "be17185b-49e7-4bf0-8489-a600e38cf608"
+...
+    url={`https://api.copomex.com/query/get_estados?token=${TOKEN}`}
+...    
+    url={`https://api.copomex.com/query/get_municipio_por_estado/${state}?token=${TOKEN}`}
+...   
+   url={`https://api.copomex.com/query/get_colonia_por_municipio/${town}?token=${TOKEN}`}
+```
+---
 
 
 
