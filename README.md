@@ -1372,7 +1372,119 @@ Utiizaremos template strings para las interpolaciones del el TOKEN y ademas pode
    url={`https://api.copomex.com/query/get_colonia_por_municipio/${town}?token=${TOKEN}`}
 ```
 ---
+# 45. Validación de formularios. Definición de componentes y lógica (1/4)
+##### FORMIK: librería de formularios. Aunque mientras menos dependecias tengamos en nuestro poyecto, mejor irá.
+Crearemos el hook personalizado useForm.jsx, recordemos que la caracteristica de un hookP es que pueda abstraer la lógica de un componente, la empaqueta digamos... y entonces el código del componente queda mas enfocado en la UI y la lógca en el hookP.
 
+#### recordar que los hooks personalizados no se exportan por default para respetar el nombre a la hora de la importación, por eso utilizamos rafc.
+
+La primer vde será form y está comenzará con los valores iniciales que reciba como parámetro.
+La segunda vde sera errors y comenzará cómo un objeto vacío ya que validaremos que si no posee ningún atributo, no hubo ningún error y podrá ser envíado.
+La tercer vde va a manejar el loading a la hora de hacer el envío.
+Y la cuarta por el momento seria la vde que devuelva la respuesta luego de hacer el submit.
+
+Además de las variables de estado que seten los datos del formulario, tambíen necesitamos los manejadores de eventos que controlen el formulario, comenzando con: 
+- handleChange: detecta la escritura y el cambio de los valores.
+- handleBlur: realizará las validaciones de que se lanzen las validaciones. Se encargará del foco de los *el*.
+- handleSubmit: manejará el envío del form.
+
+Este hook devolvera las vde y además devolverá los eventos para que los elementos jsx los puedan ejecutar o desencadenar. También el useForm debe de recibir una función que maneje las validaciones, recibida como prop.
+Realizado ya los pasos del armado lógico del useForm, pasaremos a los elementos jsx.
+
+Primero, nuestro **ContactForm** debe de destructurar las vde de nuestro *useForm*. Este igualmente inicializará con el initialForm que debemos de crear fuera de ContactForm cómo un objeto vacío. También poseera *validationsForm*, una función que se ejecutara fuera del ContactForm, recibiendo la vde form.
+
+Ahora quedaría por estructurar nuestro return jsx. Para eso creamos la etiqueta form con su *onSubmit*, dentro crearemos los inputs. Estos ademas del tipo, name, placeholder, handleChange y required, poseera el atributo **value** que posee la función de setear el valor para poder tener controlado el input a traves de la vde **form.name**.
+
+!Como las validaciones las vamos a hacer cuando pierde el **FOCO** el input, debemos de agregar el evento onBlur, que ejecutará la función handleBlur.
+
+Finalizamos añadiendo un textarea y el input submit.
+
+useForm:
+```js
+import { useState } from 'react';
+
+export const useForm = (initialForm, validateForm) => {
+    const [form, setForm] = useState(initialForm)
+    const [errors, setErrors] = useState({})
+    const [loading, setLoading] = useState(false)
+    const [response, setResponse] = useState(null)
+
+    const handleChange = (e) => { }
+    const handleBlur = (e) => { }
+    const handleSubmit = (e) => { }
+
+    return {
+        form, errors, loading, response, handleChange, handleBlur, handleSubmit
+    }
+}
+```
+ContactForm:
+```js
+import React from 'react'
+import { useForm } from '../hooks/useForm'
+
+const initialForm = {}
+const validationsForm = (form) => { }
+
+const ContactForm = () => {
+    const {
+        form,
+        errors,
+        loading,
+        response,
+        handleChange,
+        handleBlur,
+        handleSubmit,
+    } = useForm(initialForm, validationsForm)
+    return (
+        <div>
+            <h2>Formulario de Contacto</h2>
+            <form onSubmit={handleSubmit}>
+                <input
+                    type="text"
+                    name='name'
+                    placeholder='Escribe tu nombre'
+                    onBlur={handleBlur}
+                    onChange={handleChange}
+                    value={form.name}
+                    required
+                />
+                <input
+                    type="email"
+                    name='email'
+                    placeholder='Escribe tu email'
+                    onBlur={handleBlur}
+                    onChange={handleChange}
+                    value={form.email}
+                    required
+                />
+                <input
+                    type="text"
+                    name='subject'
+                    placeholder='Asunto a tratar'
+                    onBlur={handleBlur}
+                    onChange={handleChange}
+                    value={form.subject}
+                    required
+                />
+                <textarea
+                    name="comments"
+                    cols="50" rows="5"
+                    placeholder='Escribe tus comentarios'
+                    onBlur={handleBlur}
+                    onChange={handleChange}
+                    value={form.comments}
+                    required
+                ></textarea>
+                <input type="submit" value="Envíar"/>
+            </form>
+        </div>
+    )
+}
+
+export default ContactForm
+```
+---
 
 
 
