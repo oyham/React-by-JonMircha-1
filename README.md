@@ -1525,7 +1525,45 @@ const validateForm = (form) => {
     return errors
 }
 ```
-#### El trim()método elimina los espacios en blanco de ambos extremos de una cadena y devuelve una nueva cadena, sin modificar la cadena original.
+#### El método trim() elimina los espacios en blanco de ambos extremos de una cadena y devuelve una nueva cadena, sin modificar la cadena original.
+---
+# 47. Validación Formularios. Programación de validaciones (3/4)
+Comenzamos definiendo las expresiones regulares para las validaciones de los campos name, email y comments.
+- regexName = /^[A-Za-zÑñÁáÉéÍíÓóÚúÜü\s]+$/;
+- regexEmail = /^(\w+[/./-]?){1,}@[a-z]+[/.]\w{2,}$/;
+- regexComments = /^.{1,255}$/;
+
+Si pasa la primer validación, debemos de arrojar la segunda para verificar la regex con el método test() diciendo que cuando la regex no coincida con lo que viene en el nombre del form, entonces arrojamos el error con *errors.name*. Asi mismo ejecutamos los otros inputs excepto el de Subject.
+```js
+...
+let regexName = /^[A-Za-zÑñÁáÉéÍíÓóÚúÜü\s]+$/;
+let regexEmail = /^(\w+[/./-]?){1,}@[a-z]+[/.]\w{2,}$/;
+let regexComments = /^.{1,255}$/;
+
+if (!form.name.trim()) {
+        errors.name = "El campo 'Nombre' es requerido"
+    } else if(!regexName.test(form.name.trim())) {
+        errors.name = "El campo 'Nombre' sólo acepta letras y espacios en blanco"
+    }
+
+    if (!form.email.trim()) {
+        errors.email = "El campo 'Email' es requerido"
+    } else if(!regexEmail.test(form.email.trim())) {
+        errors.email = "El campo 'Email' es incorrecto"
+    }
+
+    if (!form.subject.trim()) {
+        errors.subject = "El campo 'Asunto a tratar' es requerido"
+    }
+
+    if (!form.comments.trim()) {
+        errors.comments = "El campo 'Comentarios' es requerido"
+    } else if(!regexComments.test(form.comments.trim())) {
+        errors.comments = "El campo 'Comentarios' sólo acepta 255 caracteres"
+    }
+...
+```
+#### El método test() ejecuta la búsqueda de una ocurrencia entre una expresión regular y una cadena especificada. Devuelve true o false.
 ---
 
 
