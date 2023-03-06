@@ -1485,6 +1485,49 @@ const ContactForm = () => {
 export default ContactForm
 ```
 ---
+# 46. Validación Formularios. Programación de eventos (2/4)
+Comenzamos añadiendo estilos css a los inputs type text, email, y ademas al textarea heredarle la tipografía y colocar su resize en none.
+
+**_handleChange_**: crea una copia del objeto del form y luego sólo actualiza el elemento que cambió. Gracias al spread-operator le pasamos una copia del formulario (de la variable de estado en cuestión), y con las *props* dinámicas actualizamos dicho elemento con los nombres y valores obtenidos.
+
+Según YouCode sobre setForm({...form,[e.target.name]:e.target.value}):
+"El código que proporcionaste es una forma de actualizar un objeto "form" en ReactJS. Está usando JavaScript para actualizar el objeto "form" usando la sintaxis de propagación. Está obteniendo el nombre y el valor del objeto de los datos de entrada y luego actualizando el objeto "form" con los nombres y valores proporcionados. Esto es útil para mantener un registro de los datos de un formulario para su posterior procesamiento."
+
+Pero para poder estilizar mejor este procesamiento podemos destructurar el *name* y el *value* de *e.target*.
+Recordemos que nuestro **handleChange** es el que se está ejecutando en el evento **onChange** y está ligado al value de los inputs. Esto es lo que nos permite tener formularios controlados con el estado.
+
+**_handleBlur_**: cuando nuestros *el* del form pierdan el foco de la página primero deberia actualizar el estado con la tecnica del handleChange pero aparte la vde errors debería irse actualizando. Repetimos la misma programación del handleChange, llamando a esta función, y adicionalmente, actualizamos al variable setErrors, recibiendo esta el parametro *validateForm*, siendo esta una función , validando las variables del formulario de cada input.
+ Para comenzar con una pequeña validación, debemos de dirigirnos a ContactForm dónde se encuentra la función validationForm, inicializando ahi un *let errors = {}*, siendo este un objeto vacío al igual que la inicializacion de errors en nuestro *useForm*, enviando así el mismo tipo de dato. Entonces... validateForm retornará un objeto con props según hayan existido errores, y así a traves de setErrors, actualizar nuestra vde errors.
+
+La primer condicional se preguntará si el nombre del form viene vacio, ademas de utilizar el método *trim()*. Si no tiene información, comenzará a llenarse nuestro objeto errors, asignando así una **prop** llamada name, siendo este el campo que estamos evaluando. !IMPORTANTE: por cada msje de error, habría que configurarlo... asociarlo al mismo input que está dando ese error, por eso utilizamos el mismo nombre. Colocamos el msje de dicho error. Recordar que esta función se ejectura a la hora de ejectuar nuestro handleBlur, al perder el foco de la página, se enviaran dichos datos del form recientemente actualizado por nuestro handleChange y así obtener los datos de última mano.
+Crearemos un conficional con un operador de cortocircuito bajo el primero input diciendo que si errors.name existe lanzemos dicho msje de error. Añadimos algo de estilos pertinentemente. `let styles = { fontWeight:"bold", color:"#dc3545"}`,`{errors.name && <p style={styles}>{errors.name}</p>}`. Este conditional render deberiamos de ejecturalo desp de cada input del form.
+```js
+const handleChange = (e) => {
+        const { name, value } = e.target
+
+        setForm({
+            ...form,
+            [name]: value,
+        })
+    }
+    const handleBlur = (e) => {
+        handleChange(e)
+        setErrors(validateForm(form))
+    }
+```
+```js
+const validateForm = (form) => {
+    let errors = {}
+
+    if (!form.name.trim()) {
+        errors.name = "El campo 'Nombre' es requerido"
+    }
+    return errors
+}
+```
+#### El trim()método elimina los espacios en blanco de ambos extremos de una cadena y devuelve una nueva cadena, sin modificar la cadena original.
+---
+
 
 
 
