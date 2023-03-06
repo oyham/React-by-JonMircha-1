@@ -1565,6 +1565,56 @@ if (!form.name.trim()) {
 ```
 #### El método test() ejecuta la búsqueda de una ocurrencia entre una expresión regular y una cadena especificada. Devuelve true o false.
 ---
+# 48. Valediación Formularios. Envíos de datos AJAX y API FormSubmit (4/4)
+Comenzamos programando el ``handleSubmit``, colocando un **_e.preventDefault()_** y setear el error con el validateForm.
+Colocamos un condicional para que el objeto *errors* se envíe vacío con ``(Object.keys(errors).length === 0)`` midiendo la longitud de las llaves del objeto en cuestion. Cuando sea igual a cero, se ejecutará la petición a "FormSubmit", y sino haremos un return. Si el envío del form se da correctamente, colocamos el **setLoading** en *true* para colocar el **Loader** en la UI y hacer la petición *Fetch*.
+
+Hacemos uso de nuestro *helpHttp* con el método **post()** que es el que pide FormSubmit, ademas del ``.then()`` con la respuesta. Por ``post()`` pasamos la url con nuestro email que recibirá los formularios, y además añadir el objeto con las opciones que va a recibir esta petición.
+#### al hacer uso de helpHttp recorar importarlo entre {}.
+
+Luego en la respuesta ejecturamos *setLoading* en falso para que desaparezca de la UI y setear la respuesta con *setResponse* en **true**.
+Para que el usuario vea en la UI que el envío del formulario fue exitoso, colocaremos un conditional render al finalizar el form en </form>, diciendo que si loading es verdadero, coloquemos el componente **Loader**. y si la respuesta fue exítosa, llamaremos al componente **Message**, con el msg y bgcolor respectivos. 
+Para que el mensaje del formulario envíado no se quede en la UI, colocaremos un *setTimeOut* de 5 segundos luego de que la respuesta se haya colocado en true en nuestro useForm. 
+
+Para finalizar colocamos el formulario en su estado inicial, antes del *setTimeOut*.
+
+ContactForm añadiendo los conditional render:
+```js
+</form>
+{loading && <Loader />}
+{response && <Message msg='Formulario Envíado' bgColor="green"/>}
+```
+useForm:
+```js
+const handleSubmit = (e) => {
+        e.preventDefault()
+        setErrors(validateForm(form))
+        if (Object.keys(errors).length === 0) {
+            alert("Enviando Formulario")
+            setLoading(true)
+            helpHttp()
+                .post("https://formsubmit.co/ajax/example@example.com", {
+                    body: form,
+                    headers: {
+                        "Content-type": "application/json",
+                        "Accept": "application/json",
+                    },
+                })
+                .then((res) => {
+                    setLoading(false)
+                    setResponse(true)
+                    setForm(initialForm)
+                    setTimeout(() => {
+                        setResponse(false)
+                    }, 5000);
+                })
+        } else {
+            return;
+        }
+    }
+
+```
+---
 
 
 
