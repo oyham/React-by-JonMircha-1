@@ -1615,7 +1615,70 @@ const handleSubmit = (e) => {
 
 ```
 ---
+# 49. Ventana Modal. La prop children de los componentes (1/3)
+Crearemos el componente ``Modals.jsx`` en plural para que los ejemplos de los modales sean llamados en éste, y así mismo seguir el orden en `App.jsx` llamando a "Modals". Posteriormente crearemos `Modal.jsx` y `Modal.css`.
 
+- Abstraeremos la lógica asi que crearemos un hook personalizado `useModal.jsx`.
+- Asignaremos un botón para activar y desactivar la ventana modal según las que tengamos.
+- En Modal.jsx importaremos css y devolveremos un article con todo el código jsx
+
+Nuestro `article` poseera la className modal y is-open, que luego será asignado al evento *onClick* del botón en cuestión. Dentro tendremos una div con la clase modal-container dónde se mostrará todo el contenido, y cómo hijos esta div tendra el botón de cierre de la ventana con la clase modal-close, y además el contendio aprovechando así la prop children de los componentes, siendo éste un componente contendeor.
+ Realizamos la destructuración de la propiedad ``"children"``, e interpolaremos la prop children bajo el botón de cierre.
+
+Pasamos a llamar el componente Modal en Modals, utilizando la técnica de etiqueta de apertura y de cierre, y dentro poder colocar un **h3**, un **p** y un **img**. Estas etiquetas son enviadas como props a nuestro Modal con la palabra ``"children"``. 
+
+¿Y de dónde sale "children" si no está definida como *prop*? *``CHILDREN``* hace referencia al contenido interno que posea dicho componente a la hora de ser llamado.
+
+Si visualizamos Componentes de nuestra react-developer-tools veremos que la prop children es un array donde va guardando los componentes internos por cada nodo jsx que creemos.
+
+#### En resumen, además de poder pasar props internamente cómo lo veníamos viendo, tambien podemos pasar contenidos diferentes.
+Modals:
+```js
+import React from 'react' 
+import Modal from './Modal'
+
+const Modals = () => {
+    return (
+        <div>
+            <h2>Modales</h2>
+            <button>Modal 1</button>
+            <Modal>
+                <h3>Modal 1</h3>
+                <p>Hola este es el contenido de mi modal 1</p>
+                <img src="https://placeimg.com/400/400/animals" alt="Animals" />
+            </Modal>
+            <button>Modal 2</button>
+            <Modal>
+                <h3>Modal 2</h3>
+                <p>Contenido del segundo modal</p>
+                <img src="https://placeimg.com/400/400/any" alt="Any" />
+            </Modal>
+        </div>
+    )
+}
+
+export default Modals
+```
+Modal:
+```js
+import React from 'react'
+import './Modal.css'
+
+const Modal = ({ children }) => {
+    return (
+        <article className='modal is-open'>
+            <div className="modal-container">
+                <button className="modal-close">X</button>
+                {children}
+                <hr />
+            </div>
+        </article>
+    )
+}
+
+export default Modal
+```
+---
 
 
 
