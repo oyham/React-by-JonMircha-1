@@ -1679,7 +1679,80 @@ const Modal = ({ children }) => {
 export default Modal
 ```
 ---
+# 50. Ventana Modal. Estilos y lógica del componente (2/3)
+#### Cómo quiero enfocarme más en la lógica de la programación y no tanto en los estilos, sólo voy a enseñar el código css implementado (a no ser que sea algo importante cómo para tomar nota).
 
+Comenzamos dandole estílos a la clase modal:
+```css
+.modal {
+    position: fixed;
+    z-index: 999;
+    top: 0;
+    left: 0;
+    width: 100%;
+    min-height: 100vh;
+    background-color: rgba(0,0,0,.75);
+    display: none;
+    justify-content: center;
+    align-items: center;
+}
+```
+Estilos de la prop is-open:
+```css
+.modal.is-open {
+    display: flex;
+}
+```
+##### al asignar un "." luego de una prop respectivamente, estamos diciendo que cuando la "prop" (en este caso 'modal') posea la clase 'is-open', se le asignen dichos estílos.
+
+Estilos de la prop modal-container:
+```css
+.modal-container {
+    position: relative;
+    padding: 1rem;
+    min-width: 320px;
+    max-width: 480px;
+    min-height: 200px;
+    max-height: 600px;
+    overflow-y: auto;
+    background-color: #aaa;
+}
+```
+Estilos de la prop modal-close:
+```css
+.modal-close {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+}
+```
+<hr style="height:1px"/>
+
+Ahora pasamos a la programación del ``useModal`` con rafc importando useState. La variable de estado `isOpen` se encargara de saber si el modal se encuentra abierto o no, con su estado inicial llamado ``initialValue``. Esta se recibirá cómo prop, y si el usuario no nos la pasa, le asignaremos por default el valor de *false*. Esto signifíca que los modales inicializaran ocultos. También necesitamos un método que nos permita abrir el modal llamado ``openModal`` siendo esta una arrow function, ejecutando la funcion actualizadora del estado a *true*, además de poseer otro de cierre llamado ``closeModal``, igualando la función de la vde a *false*. *useModal* tendrá un return de la vde ``isOpen`` con sus respectivas funciones en forma de arreglo [].
+
+Enviamos a llamar nuestro useModal en nuestro componente Modals, y por cada modal que creemos, posean la opción de utilizar nuestro hook personalizado. 
+Al hacer la *invocación* del useModal con las variables que regresa éste, sólo se encargara de controlar al primer modal ya que luego lo especificaremos. Tenemos la opción de utilizar los useModal que necesitemos, mientras sus variables que enviemos en el array posean nombres diferentes.
+```js
+const Modals = () => {
+    const [isOpenModal1,openModal1,closeModal1] = useModal(false)
+    const [isOpenModal2,openModal2,closeModal2] = useModal(false)
+...    
+```
+useModal:
+```js
+import {useState} from 'react'
+
+export const useModal = (initialValue = false) => {
+  const [isOpen, setIsOpen] = useState(initialValue)
+
+  const openModal = () => setIsOpen(true)
+
+  const closeModal = () => setIsOpen(false)
+
+  return [isOpen,openModal, closeModal]
+}
+```
+---
 
 
 
