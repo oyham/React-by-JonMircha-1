@@ -399,7 +399,9 @@ Los Snippets son atajos para escribir los componentes de manera mas rapida para 
 Si por algún motivo no nos salen los atajos de manera automatica, podemos ejecturalos de forma manual con ctrl + barra espaciadora. 
 
 ---
-
+# INICIO DE EJERCICIOS DE LOS CONCEPTOS BÁSICOS
+##### El repositorio de los ejercicios se encontrarán aparte.
+---
 # 28. CRUD App: Creacion de componentes y renderizado de datos (1/4)
 
 Los primeros pasos para crear el CRUD es crear un archivo llamado ``CrudApp``, en este se encontrara el _*formulario*_ donde iremos agregando datos, y una _*tabla*_ donde se iran pintando dichos datos en el DOM.
@@ -1753,6 +1755,59 @@ export const useModal = (initialValue = false) => {
 }
 ```
 ---
+# 51.Ventana Modal. Funcionalidad y reutilización del componente (3/3)
+Empezamos ocupando todas las variables de nuestro hook personalizado asignandolas cómo props en los buttons y en el componente ``<Modal>``, el evento ``onClick`` con la prop ``openModal`` para los botones, y para los modales ``isOpen`` con la prop ``isOpenModal``, y ``closeModal`` con la prop ``closeModal``.
+Renderizaremos condicionalmente la prop "is-open", recibiendo cómo prop isOpen en Modal, que es la que se encarga de saber si se debe de mostrar o no dicho modal; además de la función closeModal.
+
+En vez de tener un ``className`` *estático* en nuestro article, tendremos un className **dinámico**, utilizando "`template-string`", diciendo que la clase modal la debe de tener si o si, pero que la clase ``is-open`` sólo se va a ejectura cuando la prop ``isOpen`` que esta recibiendo como prop sea *true*, utilizando un operador de cortocircuito.
+ Para el botón de cierre, le asignamos en su evento ``onClick``, la prop ``closeModal``.
+Muchas ventanas modales permiten el cierre al hacer click en la parte exterior opaca, esto lo conseguimos dandole en el evento *onClick* al article con la prop *closeModal*, pero al hacer esto, tambien el chlidren contenedor recibe dicha **prop** y al recibir un click cómo por ej en el texto, se cierra. Para evitar esto debemos de detener la propagación del evento dentro de nuestro componente modal creando así un manejador de dicho evento con el método "``stopPropagation()``", evitando asi el evento dentro del arbol del DOM. 
+##### crearemos un modal y dentro llamaremos al componente ContactForm.
+```js
+const Modals = () => {
+    const [isOpenModal1,openModal1,closeModal1] = useModal(false)
+    const [isOpenModal2,openModal2,closeModal2] = useModal(false)
+    const [isOpenContact,openModalContact,closeModalContact] = useModal(false)
+    return (
+        <div>
+            <h2>Modales</h2>
+            <button onClick={openModal1}>Modal 1</button>
+            <Modal isOpen={isOpenModal1} closeModal={closeModal1}>
+                <h3>Modal 1</h3>
+                <p>Hola este es el contenido de mi modal 1</p>
+                <img src="https://placeimg.com/400/400/animals" alt="Animals" />
+            </Modal>
+            <button onClick={openModal2}>Modal 2</button>
+            <Modal isOpen={isOpenModal2} closeModal={closeModal2}>
+                <h3>Modal 2</h3>
+                <p>Contenido del segundo modal</p>
+                <img src="https://placeimg.com/400/400/any" alt="Any" />
+            </Modal>
+            <button onClick={openModalContact}>Modal Contacto</button>
+            <Modal isOpen={isOpenContact} closeModal={closeModalContact}>
+                <ContactForm />
+            </Modal>
+        </div>
+    )
+}
+```
+```js
+const Modal = ({ children, isOpen, closeModal }) => {
+    const handleModalContainerClick = e => e.stopPropagation()
+    return (
+        <article className={`modal ${isOpen && "is-open"}`} onClick={closeModal}>
+            <div className="modal-container" onClick={handleModalContainerClick}>
+                <button className="modal-close" onClick={closeModal}>X</button>
+                {children}
+            </div>
+        </article>
+    )
+}
+```
+---
+# FIN DE EJERCICIOS DE LOS CONCEPTOS BÁSICOS.
+---
+
 
 
 
