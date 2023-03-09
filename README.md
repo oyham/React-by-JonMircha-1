@@ -1,6 +1,7 @@
 # APUNTES 
+pd: pido disculpas si se encuentran con errores ortográficos o en la forma de redacción.
 
-
+---
 # 17. _Hook useEffect_ ScrollHooks
 
 ###### se pueden tener tantos useEffects como se necesiten
@@ -402,7 +403,7 @@ Si por algún motivo no nos salen los atajos de manera automatica, podemos eject
 # INICIO DE EJERCICIOS DE LOS CONCEPTOS BÁSICOS
 ##### El repositorio de los ejercicios se encontrarán aparte.
 ---
-# 28. CRUD App: Creacion de componentes y renderizado de datos (1/4)
+# 28. CRUD App: Creación de componentes y renderizado de datos (1/4)
 
 Los primeros pasos para crear el CRUD es crear un archivo llamado ``CrudApp``, en este se encontrara el _*formulario*_ donde iremos agregando datos, y una _*tabla*_ donde se iran pintando dichos datos en el DOM.
 También creamos una base de datos para hacer uso de la petición a utilizar.
@@ -1805,10 +1806,34 @@ const Modal = ({ children, isOpen, closeModal }) => {
 }
 ```
 ---
+# 52. Portales 🌌⚛️
+Imaginemos que deseamos tener elementos html a la carga del DOM, sin tener que renderizarlo a traves del "id=root", cómo por ejemplo ventanas modales de logueo, de públicidad, ventanas modales para dar avisos. Otra interacción de mandar código html hacia otro elemento del DOM podria ser comportamientos del estado hover de alguna "tarjeta", loaders... que en vez de ser cargados dinamicamente en la misma aplicación, tengamos un nodo vacío en nuestro `index.html` esperando que cáda vez que hagamos una petición, se cargue un loader, por ejemplo.
+Otro ejemplo serian los tool-tips, cáda vez que pasemos el mouse sobre ellos nos aparezca una ventana modal u instrucciones. En estos casos, nos convendría poseer los elementos en el DOM real, y ahí cargarlos.
+
+## Para esto nos sirve los portales.
+Copiamos y pegamos el archivo Modal.jsx y le cambiamos el nombre a "ModalPortal", además del nombre de la función y su exportación.
+Luego en Modals creamos una nueva variable de estado y asignamos un nuevo botón y componente ModalPortal con sus respectivas props.
+```js
+const [isOpenPortal,openModalPortal,closeModalPortal] = useModal(false)
+...
+<button onClick={openModalPortal}>Modal Contacto</button>
+<ModalPortal isOpen={isOpenPortal} closeModal={closeModalPortal}>
+    <ContactForm />
+</ModalPortal>
+```
+Para el uso de los portales debemos de importar ReactDOM en nuestro archivo ModalPortal, y además necesitamos la estructura que viene en nuestro index.js o main.jsx en mi caso.
+Existen diferencias de escritura para el renderizaco y creación de elementos en comparación con mi main.jsx y el index.js de Jon, cabe destacar que yo utilicé vite y no create-react-app. Se debe de devolver un sólo elemento, código jsx.
+```js
+ <p>Mi render:</p>
+ReactDOM.createRoot(document.getElementById('modal')).render( <></> )
+<p>Render de Jon:</p>
+ReactDom.createPortal(<></>,document.getelementById('modal'))
+```
+La que me funcionó fue el método de Jon.
+
+---
 # FIN DE EJERCICIOS DE LOS CONCEPTOS BÁSICOS.
 ---
-
-
 
 
 
