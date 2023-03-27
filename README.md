@@ -402,6 +402,8 @@ Si por algún motivo no nos salen los atajos de manera automatica, podemos eject
 ---
 # INICIO DE EJERCICIOS DE LOS CONCEPTOS BÁSICOS
 ##### El repositorio de los ejercicios se encontrarán aparte.
+Si deseas ver los archivos de los ejercicios visita este [link](https://github.com/oyham/ReactEjercicios-by-JonMircha-1)
+
 ---
 # 28. CRUD App: Creación de componentes y renderizado de datos (1/4)
 
