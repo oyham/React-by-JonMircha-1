@@ -1,6 +1,32 @@
 # APUNTES 
 pd: pido disculpas si se encuentran con errores ortográficos o en la forma de redacción.
 
+# 16. _Hook useState_
+Al ejecutar la función useState esta nos devuelve un arreglo con 2 posiciones... el valor que pretendemos manejar a través del estado, y la función que lo va a actualizar. Crearemos el componente **ContadorHooks** y haremos uso del snippet del useStateSnippet. La primer posición es la variable de estado *vde* y la llamaremos contador, luego al presionar la tecla *TAB*, visual studio code colocará el nombre de nuestra vde con mayúscula pero sólo en la función actualizadora (lowerCamelCase) y el cursor quedará justo en el initialState de nuestro **useState**.
+Crearemos dos variables *sumar, restar*, cada una será una función flecha que ejectura la funcion actualizadora de nuestra *vde*, sólo que la variable sumar sumará, y la de restar restará...
+Luego devolveremos dos botones que en su evento onClick ejecuten su respectiva función.
+```js
+import React, { useState } from 'react';
+
+export default function ContadorHooks(props) {
+    // console.log(useState())
+    const [contador, setContador] = useState(0)
+
+    const sumar = () => setContador(contador + 1)
+    const restar = () => setContador(contador - 1)
+
+    return (
+        <>
+            <hr />
+            <h2>Hooks - useState</h2>
+            <nav>
+                <button onClick={sumar}>+</button>
+                <p>Contador {props.titulo} {contador}</p>
+                <button onClick={restar}>-</button>
+            </nav>
+        </>
+    )
+```
 ---
 # 17. _Hook useEffect_ ScrollHooks
 
